@@ -8,6 +8,8 @@ import { whatsappLink } from "@/lib/site";
 import { getSettings } from "@/lib/data/settings";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/iletisim" },
+  openGraph: { url: "/iletisim" },
   title: "İletişim",
   description:
     "Adres, telefon, e-posta, WhatsApp ve iletişim formu ile bize ulaşın.",

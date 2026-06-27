@@ -474,6 +474,19 @@ eklerken bu tuzağa dikkat.**
 
 ---
 
+## 15. SEO Altyapısı
+
+Üretim seviyesi teknik SEO katmanı (iş mantığına dokunmadan):
+- **`lib/seo/url.ts`** — `SITE_URL` (= `NEXT_PUBLIC_SITE_URL`, prod'da gerçek domain!) + `absoluteUrl()`. Tek doğru kaynak.
+- **`lib/seo/jsonld.ts`** — tip-güvenli JSON-LD üreticileri (Organization/LocalBusiness, WebSite+SearchAction, BreadcrumbList, Product+Offer, ItemList). **`components/seo/json-ld.tsx`** güvenli serialize ile gömer.
+- **Kök metadata** (`app/layout.tsx` `generateMetadata`): metadataBase, title template, keywords, twitter, googleBot, `verification` (env `GOOGLE_SITE_VERIFICATION`), `viewport.themeColor`.
+- **Org+WebSite JSON-LD** `app/(public)/layout.tsx`'te (site geneli, getSettings'ten dinamik).
+- **Sayfa metadata**: her public sayfada `alternates.canonical` + OG. Ürün/marka detay `generateMetadata` (canonical + OG image + Product/Breadcrumb/ItemList JSON-LD). `/urunler` filtre varyantları **noindex,follow** + canonical temel `/urunler`. `/sepet`, `/teklif-iste` **noindex** (layout.tsx).
+- **`app/robots.ts`** (admin/sepet/teklif/api disallow + sitemap), **`app/sitemap.ts`** (statik + tüm ürün/marka, veri katmanından).
+- **`app/icon.tsx` + `app/apple-icon.tsx` + `app/opengraph-image.tsx`** — `next/og` ImageResponse ile üretilen markalı favicon/OG kartı (DejaVu fontu `lib/pdf/fonts/`'tan). **`app/manifest.ts`** (theme `#1B4965`).
+- **`app/(public)/not-found.tsx` + `error.tsx`** — markalı 404/hata.
+- **Tuzak:** ImageResponse (Satori) metin için font ZORUNLU + her çok-çocuklu div'e `display:flex` gerekir; runtime `nodejs` (fs ile font okuma).
+
 ## 14. Faz Geçmişi (commit'ler)
 
 - **Faz 1:** Tasarım sistemi + anasayfa + hakkımızda.

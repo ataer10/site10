@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { type Product, grossPrice } from "@/lib/data/catalog";
 import { formatPrice } from "@/lib/utils";
+import { productFallbackImage } from "@/lib/product-image";
 import { ProductImage } from "@/components/catalog/product-image";
 import { AddToCartButton } from "@/components/catalog/add-to-cart-button";
 import type { CartProduct } from "@/lib/store/cart";
@@ -24,7 +25,11 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="group flex flex-col overflow-hidden border border-ink-200 bg-white transition-colors hover:border-ink-300">
       <Link href={href} className="relative block border-b border-ink-100">
-        <ProductImage src={product.imageUrl} alt={product.name} />
+        <ProductImage
+          src={product.imageUrl}
+          fallbackSrc={productFallbackImage(product.category?.slug, product.slug)}
+          alt={product.name}
+        />
         {product.brand ? (
           <span className="absolute left-3 top-3 inline-flex items-center rounded-sm border border-ink-200 bg-white/90 px-2 py-0.5 font-display text-[11px] font-bold uppercase tracking-tight text-ink-600 backdrop-blur">
             {product.brand.name}

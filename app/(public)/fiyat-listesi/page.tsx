@@ -17,6 +17,8 @@ import { getPriceList, grossPrice } from "@/lib/data/catalog";
 import { formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/fiyat-listesi" },
+  openGraph: { url: "/fiyat-listesi" },
   title: "Fiyat Listesi",
   description:
     "Tüm ürünlerin güncel liste fiyatları — tablo halinde, Excel (CSV) veya PDF olarak indirilebilir.",

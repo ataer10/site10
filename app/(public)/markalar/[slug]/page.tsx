@@ -11,6 +11,8 @@ import {
   getAllBrandSlugs,
   getProductsByBrand,
 } from "@/lib/data/catalog";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo/jsonld";
 
 export async function generateStaticParams() {
   const slugs = await getAllBrandSlugs();
@@ -24,10 +26,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const brand = await getBrandBySlug(slug);
-  if (!brand) return { title: "Marka bulunamadı" };
+  if (!brand) return { title: "Marka bulunamadı", robots: { index: false } };
+  const title = `${brand.name} Ürünleri`;
+  const description = `${brand.name} ürünleri — yetkili kanaldan orijinal endüstriyel tesisat malzemeleri, açık liste fiyatı ve hızlı teklif.`;
+  const path = `/markalar/${brand.slug}`;
   return {
-    title: brand.name,
-    description: `${brand.name} ürünleri — yetkili kanaldan orijinal endüstriyel tesisat malzemeleri.`,
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: { url: path, title, description },
   };
 }
 
@@ -44,6 +51,21 @@ export default async function BrandDetailPage({
 
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Anasayfa", path: "/" },
+            { name: "Markalar", path: "/markalar" },
+            { name: brand.name, path: `/markalar/${brand.slug}` },
+          ]),
+          itemListJsonLd(
+            products.slice(0, 30).map((p) => ({
+              name: p.name,
+              path: `/urunler/${p.slug}`,
+            })),
+          ),
+        ]}
+      />
       <PageHeader
         title={brand.name}
         description={`${brand.name} ürün grubundan ${products.length} ürün listeleniyor.`}

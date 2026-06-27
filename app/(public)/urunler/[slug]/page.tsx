@@ -20,6 +20,10 @@ import {
   grossPrice,
 } from "@/lib/data/catalog";
 import { formatPrice } from "@/lib/utils";
+import { productFallbackImage } from "@/lib/product-image";
+import { absoluteUrl } from "@/lib/seo/url";
+import { JsonLd } from "@/components/seo/json-ld";
+import { productJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 
 export async function generateStaticParams() {
   const slugs = await getAllProductSlugs();
@@ -33,12 +37,33 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  if (!product) return { title: "Ürün bulunamadı" };
+  if (!product) return { title: "Ürün bulunamadı", robots: { index: false } };
+
+  const title = product.brand
+    ? `${product.name} — ${product.brand.name}`
+    : product.name;
+  const description =
+    product.description ??
+    `${product.name}${product.sku ? ` (${product.sku})` : ""} — ${product.brand?.name ?? "endüstriyel tesisat"} ürünü. Açık liste fiyatı, hızlı teklif.`;
+  const ogImage = absoluteUrl(
+    product.imageUrl ??
+      productFallbackImage(product.category?.slug, product.slug) ??
+      "/img/logo.png",
+  );
+  const path = `/urunler/${product.slug}`;
+
   return {
-    title: product.name,
-    description:
-      product.description ??
-      `${product.name} — ${product.brand?.name ?? "endüstriyel tesisat"} ürünü.`,
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      url: path,
+      title,
+      description,
+      images: [{ url: ogImage }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
   };
 }
 
@@ -64,8 +89,32 @@ export default async function ProductDetailPage({
     { label: "KDV Oranı", value: `%${product.vatRate}` },
   ].filter(Boolean) as { label: string; value: string; mono?: boolean }[];
 
+  const fallback = product.imageUrl ?? productFallbackImage(product.category?.slug, product.slug);
+
   return (
     <div className="py-8 lg:py-12">
+      <JsonLd
+        data={[
+          productJsonLd({
+            name: product.name,
+            slug: product.slug,
+            sku: product.sku,
+            description: product.description,
+            imageUrl: fallback,
+            brandName: product.brand?.name ?? null,
+            listPrice: product.listPrice,
+            currency: product.currency,
+          }),
+          breadcrumbJsonLd([
+            { name: "Anasayfa", path: "/" },
+            { name: "Ürünler", path: "/urunler" },
+            ...(product.category
+              ? [{ name: product.category.name, path: `/urunler?kategori=${product.category.slug}` }]
+              : []),
+            { name: product.name, path: `/urunler/${product.slug}` },
+          ]),
+        ]}
+      />
       <Container>
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-8">
@@ -101,6 +150,7 @@ export default async function ProductDetailPage({
           <div className="border border-ink-200">
             <ProductImage
               src={product.imageUrl}
+              fallbackSrc={productFallbackImage(product.category?.slug, product.slug)}
               alt={product.name}
               sizes="(min-width: 1024px) 50vw, 100vw"
               priority

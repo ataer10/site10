@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -14,6 +15,11 @@ import { CoverImage } from "@/components/site/media";
 import { BrandStrip } from "@/components/site/brand-strip";
 import { homeCategories, homeFeatures, homeStats } from "@/lib/content";
 import { formatPrice } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 const heroTrust = ["Açık liste fiyatları", "Üyeliksiz teklif", "Orijinal & faturalı"];
 

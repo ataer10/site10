@@ -11,14 +11,35 @@ import { Pagination } from "@/components/catalog/pagination";
 import { getBrands, getCategories, getProducts } from "@/lib/data/catalog";
 import {
   parseProductFilters,
+  PARAM,
   type SearchParamsRecord,
 } from "@/lib/catalog-params";
 
-export const metadata: Metadata = {
-  title: "Ürünler",
-  description:
-    "Endüstriyel tesisat malzemeleri kataloğu — marka, kategori ve alt kategoriye göre filtreleyin. Fiyatlar herkese açık.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParamsRecord>;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  // Filtre/sayfa parametreli varyantlar index'i şişirmesin:
+  // canonical her zaman temel /urunler; varyantlar noindex,follow.
+  const hasFilters = [
+    PARAM.brand,
+    PARAM.category,
+    PARAM.subcategory,
+    PARAM.q,
+    PARAM.page,
+  ].some((k) => typeof sp[k] === "string" && sp[k] !== "");
+
+  return {
+    title: "Ürün Kataloğu",
+    description:
+      "Endüstriyel tesisat malzemeleri kataloğu — vana, boru, pompa, bağlantı elemanları. Marka, kategori ve alt kategoriye göre filtreleyin; tüm fiyatlar herkese açık.",
+    alternates: { canonical: "/urunler" },
+    openGraph: { url: "/urunler" },
+    robots: hasFilters ? { index: false, follow: true } : undefined,
+  };
+}
 
 export default async function UrunlerPage({
   searchParams,

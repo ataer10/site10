@@ -15,6 +15,8 @@ import { homeStats } from "@/lib/content";
 import { getSettings } from "@/lib/data/settings";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/hakkimizda" },
+  openGraph: { url: "/hakkimizda" },
   title: "Hakkımızda",
   description:
     "Birtek Endüstriyel; vana, boru, pompa ve tesisat malzemelerinde yetkili distribütör kanalından B2B tedarik sağlayan bir mühendislik tedarik firmasıdır.",

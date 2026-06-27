@@ -6,6 +6,8 @@ import { CatalogLibrary } from "@/components/catalog/catalog-library";
 import { getCatalogs } from "@/lib/data/catalogs";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/kataloglar" },
+  openGraph: { url: "/kataloglar" },
   title: "Kataloglar",
   description:
     "Bayisi olduğumuz markaların resmi ürün kataloglarını PDF olarak indirin.",

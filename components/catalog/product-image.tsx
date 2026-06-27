@@ -3,22 +3,29 @@ import { Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Ürün görseli — görsel varsa next/image (object-contain, beyaz zemin),
- * yoksa nötr gri çerçeveli placeholder (tasarım dili: gri çerçeve).
+ * Ürün görseli:
+ *  - Gerçek görsel (src) → next/image object-contain, beyaz zemin.
+ *  - Yoksa temsili görsel (fallbackSrc) → object-cover + "temsili" etiketi.
+ *  - O da yoksa → nötr gri placeholder.
  */
 export function ProductImage({
   src,
+  fallbackSrc = null,
   alt,
   sizes = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw",
   className,
   priority = false,
 }: {
   src: string | null;
+  fallbackSrc?: string | null;
   alt: string;
   sizes?: string;
   className?: string;
   priority?: boolean;
 }) {
+  const effective = src ?? fallbackSrc;
+  const isReal = Boolean(src);
+
   return (
     <div
       className={cn(
@@ -26,15 +33,22 @@ export function ProductImage({
         className,
       )}
     >
-      {src ? (
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          sizes={sizes}
-          priority={priority}
-          className="object-contain p-4"
-        />
+      {effective ? (
+        <>
+          <Image
+            src={effective}
+            alt={alt}
+            fill
+            sizes={sizes}
+            priority={priority}
+            className={isReal ? "object-contain p-4" : "object-cover"}
+          />
+          {!isReal ? (
+            <span className="absolute left-1.5 top-1.5 rounded-sm bg-ink-900/75 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wide text-white/90 backdrop-blur">
+              Temsili
+            </span>
+          ) : null}
+        </>
       ) : (
         <div className="absolute inset-0 grid place-items-center bg-ink-50">
           <div className="flex flex-col items-center gap-2 text-ink-300">

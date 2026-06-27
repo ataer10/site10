@@ -5,6 +5,8 @@ import { BrandCard } from "@/components/catalog/brand-card";
 import { loadCatalog } from "@/lib/data/catalog";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/markalar" },
+  openGraph: { url: "/markalar" },
   title: "Markalar",
   description:
     "Yetkili bayiliğini yaptığımız endüstriyel tesisat markaları — Grundfos, Wilo, Viega, Geberit, Festo ve daha fazlası.",

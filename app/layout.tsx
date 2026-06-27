@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/data/settings";
+import { SITE_URL } from "@/lib/seo/url";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -23,24 +24,66 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#1B4965",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSettings();
+  const titleDefault = `${site.name} — ${site.tagline}`;
   return {
-    metadataBase: new URL(site.url),
-    title: {
-      default: `${site.name} — ${site.tagline}`,
-      template: `%s | ${site.name}`,
-    },
+    metadataBase: new URL(SITE_URL),
+    title: { default: titleDefault, template: `%s | ${site.shortName}` },
     description: site.description,
+    applicationName: site.name,
+    keywords: [
+      "endüstriyel tesisat malzemeleri",
+      "vana",
+      "küresel vana",
+      "kelebek vana",
+      "çek valf",
+      "pompa",
+      "sirkülasyon pompası",
+      "boru",
+      "fittings",
+      "bağlantı elemanları",
+      "manometre",
+      "B2B tedarik",
+      site.shortName,
+    ],
+    authors: [{ name: site.name }],
+    creator: site.name,
+    publisher: site.name,
+    formatDetection: { telephone: true, address: true, email: true },
     openGraph: {
       type: "website",
       locale: "tr_TR",
       siteName: site.name,
-      title: `${site.name} — ${site.tagline}`,
+      title: titleDefault,
       description: site.description,
-      url: site.url,
+      url: SITE_URL,
     },
-    robots: { index: true, follow: true },
+    twitter: {
+      card: "summary_large_image",
+      title: titleDefault,
+      description: site.description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    verification: process.env.GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+      : undefined,
   };
 }
 
