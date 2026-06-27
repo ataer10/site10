@@ -31,6 +31,8 @@ if (supabaseUrl) {
 
 const nextConfig: NextConfig = {
   images: { remotePatterns },
+  // @react-pdf/renderer'ı sunucu tarafında bundle'lama (fontkit vb. native bağımlılıklar)
+  serverExternalPackages: ["@react-pdf/renderer"],
 };
 
 export default nextConfig;

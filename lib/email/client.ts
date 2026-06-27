@@ -27,6 +27,7 @@ export async function sendEmail(opts: {
   subject: string;
   html: string;
   replyTo?: string;
+  attachments?: { filename: string; content: Buffer }[];
 }): Promise<SendResult> {
   const resend = getResend();
   if (!resend) {
@@ -42,6 +43,7 @@ export async function sendEmail(opts: {
       subject: opts.subject,
       html: opts.html,
       replyTo: opts.replyTo,
+      attachments: opts.attachments,
     });
     if (error) return { sent: false, error: error.message };
     return { sent: true, id: data?.id };

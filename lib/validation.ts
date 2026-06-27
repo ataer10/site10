@@ -49,3 +49,23 @@ export const contactSchema = z.object({
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;
+
+/* ------------------------------ Ürün ------------------------------ */
+
+export const productFormSchema = z.object({
+  name: z.string().trim().min(2, "Ürün adı gerekli").max(200),
+  sku: z.string().trim().max(60).optional().or(z.literal("")),
+  brandId: z.string().optional().or(z.literal("")),
+  categoryId: z.string().optional().or(z.literal("")),
+  subcategoryId: z.string().optional().or(z.literal("")),
+  listPrice: z
+    .number({ error: "Geçerli bir fiyat girin" })
+    .positive("Fiyat 0'dan büyük olmalı"),
+  unit: z.string().trim().min(1).max(20),
+  vatRate: z.number({ error: "Geçerli KDV oranı" }).min(0).max(100),
+  description: z.string().trim().max(3000).optional().or(z.literal("")),
+  imageUrl: z.string().trim().url("Geçerli bir URL").optional().or(z.literal("")),
+  isActive: z.boolean(),
+});
+
+export type ProductFormInput = z.infer<typeof productFormSchema>;

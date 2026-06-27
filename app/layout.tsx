@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { site } from "@/lib/site";
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import { WhatsAppFloat } from "@/components/site/whatsapp-float";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -54,11 +51,8 @@ export default function RootLayout({
       lang="tr"
       className={`${inter.variable} ${archivo.variable} ${jetbrainsMono.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col bg-background text-foreground antialiased">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
-        <WhatsAppFloat />
+      <body className="min-h-full bg-background text-foreground antialiased">
+        {children}
       </body>
     </html>
   );

@@ -133,6 +133,31 @@ ${totalsBlock(d)}
   };
 }
 
+/** Müşteriye: hazır resmi teklif (PDF ekli). */
+export function quoteReadyToCustomer(d: {
+  quoteNumber: string;
+  customerName: string;
+  grandTotal: number;
+  validUntil?: string | null;
+}): { subject: string; html: string } {
+  const valid = d.validUntil
+    ? new Intl.DateTimeFormat("tr-TR", { dateStyle: "long" }).format(new Date(d.validUntil))
+    : null;
+  const body = `
+<p style="margin:0 0 16px;font-size:14px;color:${C.ink};">Sayın ${escapeHtml(d.customerName)},</p>
+<p style="margin:0 0 16px;font-size:14px;color:${C.muted};">Talebiniz üzerine hazırladığımız <strong style="color:${C.ink};">iskontolu resmi teklifimizi</strong> ekte PDF olarak bulabilirsiniz.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};border:1px solid ${C.border};padding:14px 16px;margin-bottom:18px;">
+<tr><td style="font-size:13px;color:${C.muted};">Teklif No</td><td style="font-size:13px;color:${C.ink};font-family:monospace;text-align:right;">${d.quoteNumber}</td></tr>
+<tr><td style="font-size:13px;color:${C.muted};">Genel Toplam</td><td style="font-size:15px;color:${C.ink};font-weight:bold;text-align:right;">${formatPrice(d.grandTotal)}</td></tr>
+${valid ? `<tr><td style="font-size:13px;color:${C.muted};">Geçerlilik</td><td style="font-size:13px;color:${C.ink};text-align:right;">${valid}</td></tr>` : ""}
+</table>
+<p style="margin:0;font-size:13px;color:${C.muted};">Sorularınız için bu e-postayı yanıtlayabilir ya da bizi arayabilirsiniz. İlginiz için teşekkür ederiz.</p>`;
+  return {
+    subject: `Teklifiniz hazır — ${d.quoteNumber}`,
+    html: layout("İskontolu teklifiniz", body),
+  };
+}
+
 /** Firmaya: iletişim formu mesajı. */
 export function contactToCompany(c: {
   name: string;
