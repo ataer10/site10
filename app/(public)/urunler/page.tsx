@@ -36,6 +36,7 @@ export default async function UrunlerPage({
       <PageHeader
         title="Ürün Kataloğu"
         description="Marka, kategori ve alt kategoriye göre filtreleyin; tüm fiyatlar açıktır."
+        image="/img/pexels-sonny-vermeer-505472791-17728787.jpg"
         breadcrumbs={[{ title: "Ürünler" }]}
       />
 

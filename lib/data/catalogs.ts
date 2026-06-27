@@ -21,8 +21,8 @@ const collator = new Intl.Collator("tr", { sensitivity: "base" });
 export const getCatalogs = cache(async (): Promise<Catalog[]> => {
   if (!isSupabaseConfigured()) return demoCatalogs();
   try {
-    const { createClient } = await import("@/lib/supabase/server");
-    const supabase = await createClient();
+    const { createPublicClient } = await import("@/lib/supabase/public");
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("catalogs")
       .select("*, brand:brands(name,slug)")

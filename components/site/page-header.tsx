@@ -1,20 +1,24 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import { CoverImage } from "@/components/site/media";
 import { cn } from "@/lib/utils";
 
 type Crumb = { title: string; href?: string };
 
-/** İç sayfa başlığı — breadcrumb + başlık + açıklama, koyu endüstriyel bant. */
+/** İç sayfa başlığı — breadcrumb + başlık + açıklama, koyu endüstriyel bant.
+ *  `image` verilirse arka plana koyu-overlay'li fotoğraf yerleşir. */
 export function PageHeader({
   title,
   description,
   breadcrumbs = [],
+  image,
   className,
 }: {
   title: string;
   description?: string;
   breadcrumbs?: Crumb[];
+  image?: string;
   className?: string;
 }) {
   return (
@@ -24,7 +28,11 @@ export function PageHeader({
         className,
       )}
     >
-      <div className="absolute inset-0 bg-grid opacity-[0.06]" aria-hidden />
+      {image ? (
+        <CoverImage src={image} overlay="darker" sizes="100vw" />
+      ) : (
+        <div className="absolute inset-0 bg-grid opacity-[0.06]" aria-hidden />
+      )}
       <Container className="relative py-12 lg:py-16">
         <nav aria-label="Breadcrumb" className="mb-5">
           <ol className="flex flex-wrap items-center gap-1.5 text-xs text-ink-400">

@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { SUPABASE_URL, SUPABASE_ANON_KEY, isSupabaseConfigured } from "@/lib/supabase/env";
+import { isAdminEmail } from "@/lib/admin-access";
 
 /**
  * Oturumu tazeler ve /admin'i korur.
@@ -38,13 +39,18 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (path.startsWith("/admin") && !isLogin && !user) {
+  // Yalnızca beyaz listedeki e-posta admin sayılır
+  const isAdmin = Boolean(user && isAdminEmail(user.email));
+
+  if (path.startsWith("/admin") && !isLogin && !isAdmin) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
+    url.search = "";
     url.searchParams.set("next", path);
+    if (user && !isAdmin) url.searchParams.set("denied", "1");
     return NextResponse.redirect(url);
   }
-  if (isLogin && user) {
+  if (isLogin && isAdmin) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
     url.search = "";

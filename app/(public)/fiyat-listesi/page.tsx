@@ -41,6 +41,7 @@ export default async function FiyatListesiPage() {
       <PageHeader
         title="Fiyat Listesi"
         description="Güncel liste fiyatları (KDV hariç). Excel veya PDF olarak indirebilirsiniz."
+        image="/img/pexels-quangludo-12527113.jpg"
         breadcrumbs={[{ title: "Fiyat Listesi" }]}
       />
 

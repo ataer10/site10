@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Container, SectionHeading } from "@/components/ui/container";
 import { PageHeader } from "@/components/site/page-header";
+import { CoverImage } from "@/components/site/media";
 import { Button } from "@/components/ui/button";
 import { homeStats } from "@/lib/content";
 import { getSettings } from "@/lib/data/settings";
@@ -56,12 +57,14 @@ export default async function HakkimizdaPage() {
       <PageHeader
         title="Tesisatın arkasındaki tedarik disiplini"
         description="1994'ten bu yana endüstriyel tesisat malzemelerinde, mühendislik titizliğiyle doğru ürünü doğru zamanda tedarik ediyoruz."
+        image="/img/pexels-pixabay-357440.jpg"
         breadcrumbs={[{ title: "Hakkımızda" }]}
       />
 
       {/* Kurumsal anlatı */}
       <section className="border-b border-border py-20">
-        <Container className="grid gap-12 lg:grid-cols-12">
+        <Container>
+          <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <SectionHeading
               kicker="Biz Kimiz"
@@ -90,18 +93,29 @@ export default async function HakkimizdaPage() {
             </div>
           </div>
 
-          {/* Sayılarla firma */}
+          {/* Görsel */}
           <div className="lg:col-span-5">
-            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-ink-200 bg-ink-200">
-              {homeStats.map((s) => (
-                <div key={s.label} className="bg-white p-6">
-                  <p className="font-display text-3xl font-extrabold tracking-tight text-steel-600 tnum">
-                    {s.value}
-                  </p>
-                  <p className="mt-1 text-sm text-ink-500">{s.label}</p>
-                </div>
-              ))}
+            <div className="relative aspect-[3/2] overflow-hidden rounded-md border border-ink-200 shadow-flat lg:aspect-[4/5]">
+              <CoverImage
+                src="/img/pexels-marianna-zuzanna-498248397-16442684.jpg"
+                alt="Tesisat hatlarında çalışan teknik ekip"
+                overlay="none"
+                sizes="(min-width: 1024px) 40vw, 100vw"
+              />
             </div>
+          </div>
+          </div>
+
+          {/* Sayılarla firma */}
+          <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-ink-200 bg-ink-200 lg:grid-cols-4">
+            {homeStats.map((s) => (
+              <div key={s.label} className="bg-white p-6">
+                <p className="font-display text-3xl font-extrabold tracking-tight text-steel-600 tnum">
+                  {s.value}
+                </p>
+                <p className="mt-1 text-sm text-ink-500">{s.label}</p>
+              </div>
+            ))}
           </div>
         </Container>
       </section>

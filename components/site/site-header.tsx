@@ -51,8 +51,12 @@ export function SiteHeader({
       {/* Ana bar */}
       <div className="border-b border-border bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
         <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-          <Link href="/" aria-label={settings.name} className="shrink-0">
-            <Logo showTagline shortName={settings.shortName} tagline={settings.tagline} />
+          <Link
+            href="/"
+            aria-label={settings.name}
+            className="flex shrink-0 items-center"
+          >
+            <Logo priority />
           </Link>
 
           {/* Masaüstü nav */}

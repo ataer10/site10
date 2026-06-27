@@ -23,6 +23,7 @@ export default async function IletisimPage() {
       <PageHeader
         title="İletişim"
         description="Teklif, teknik destek ve tedarik talepleriniz için bize ulaşın."
+        image="/img/pexels-pixabay-357440.jpg"
         breadcrumbs={[{ title: "İletişim" }]}
       />
 

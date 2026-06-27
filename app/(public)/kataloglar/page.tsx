@@ -19,6 +19,7 @@ export default async function KataloglarPage() {
       <PageHeader
         title="Kataloglar"
         description="Bayisi olduğumuz markaların resmi ürün kataloglarını markaya göre filtreleyin, inceleyin ve PDF olarak indirin."
+        image="/img/pexels-sonny-29248902.jpg"
         breadcrumbs={[{ title: "Kataloglar" }]}
       />
 

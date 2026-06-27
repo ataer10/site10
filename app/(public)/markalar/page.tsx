@@ -23,6 +23,7 @@ export default async function MarkalarPage() {
       <PageHeader
         title="Markalar"
         description="Avrupa ve dünya standartlarında üreticilerin orijinal ürünlerini yetkili kanaldan tedarik ediyoruz."
+        image="/img/pexels-sharaf-design-1962240186-28900882.jpg"
         breadcrumbs={[{ title: "Markalar" }]}
       />
 

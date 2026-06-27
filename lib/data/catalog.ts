@@ -87,8 +87,8 @@ export const loadCatalog = cache(async (): Promise<Catalog> => {
 });
 
 async function loadFromSupabase(): Promise<Catalog> {
-  const { createClient } = await import("@/lib/supabase/server");
-  const supabase = await createClient();
+  const { createPublicClient } = await import("@/lib/supabase/public");
+  const supabase = createPublicClient();
 
   const [brandsRes, categoriesRes, subcategoriesRes, productsRes] =
     await Promise.all([

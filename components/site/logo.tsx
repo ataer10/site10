@@ -1,37 +1,47 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { defaultSettings } from "@/lib/site";
 
-/** Endüstriyel kelime-marka: monolitik blok + sıkı grotesk tipografi. */
+/**
+ * Birtek Endüstriyel resmi logosu (public/img/logo.png — 1004×452, şeffaf).
+ * `onDark`: koyu zeminde (footer) okunması için beyaz kutu içinde gösterir.
+ */
 export function Logo({
   className,
-  showTagline = false,
-  shortName = defaultSettings.shortName,
-  tagline = defaultSettings.tagline,
+  onDark = false,
+  priority = false,
 }: {
   className?: string;
-  showTagline?: boolean;
-  shortName?: string;
-  tagline?: string;
+  onDark?: boolean;
+  priority?: boolean;
 }) {
-  return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
+  const img = (
+    <Image
+      src="/img/logo.png"
+      alt="Birtek Endüstriyel — Kontrol Sistemleri ve Bağlantı Elemanları"
+      width={1004}
+      height={452}
+      priority={priority}
+      sizes="(min-width: 640px) 200px, 160px"
+      className="h-full w-auto object-contain"
+    />
+  );
+
+  if (onDark) {
+    return (
       <span
-        aria-hidden
-        className="grid size-8 place-items-center rounded-sm bg-ink-900 font-display text-base font-extrabold leading-none text-white"
+        className={cn(
+          "inline-flex h-11 items-center rounded-sm bg-white px-3 py-1.5",
+          className,
+        )}
       >
-        {shortName.charAt(0).toLocaleUpperCase("tr")}
+        {img}
       </span>
-      <span className="flex flex-col leading-none">
-        <span className="font-display text-lg font-extrabold uppercase tracking-tight text-ink-900">
-          {shortName}
-          <span className="text-orange-500">.</span>
-        </span>
-        {showTagline ? (
-          <span className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-400">
-            {tagline}
-          </span>
-        ) : null}
-      </span>
+    );
+  }
+
+  return (
+    <span className={cn("inline-flex h-9 items-center sm:h-10", className)}>
+      {img}
     </span>
   );
 }

@@ -26,8 +26,8 @@ export type SettingsInput = {
 export const getSettings = cache(async (): Promise<SiteSettings> => {
   if (!isSupabaseConfigured()) return defaultSettings;
   try {
-    const { createClient } = await import("@/lib/supabase/server");
-    const supabase = await createClient();
+    const { createPublicClient } = await import("@/lib/supabase/public");
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("site_settings")
       .select("*")

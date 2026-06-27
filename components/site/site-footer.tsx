@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import { Logo } from "@/components/site/logo";
 import { defaultSettings, type SiteSettings } from "@/lib/site";
 
 const productLinks = [
@@ -21,24 +22,17 @@ export function SiteFooter({
   settings?: SiteSettings;
 }) {
   return (
-    <footer className="mt-auto border-t border-ink-800 bg-ink-900 text-ink-300 print:hidden">
+    <footer className="mt-auto border-t border-ink-800 bg-ink-950 text-ink-300 print:hidden">
       <Container className="py-14">
         <div className="grid gap-10 lg:grid-cols-12">
           {/* Marka + iletişim */}
           <div className="lg:col-span-5">
-            <Link href="/" aria-label={settings.name}>
-              <span className="inline-flex items-center gap-2.5">
-                <span
-                  aria-hidden
-                  className="grid size-8 place-items-center rounded-sm bg-white font-display text-base font-extrabold leading-none text-ink-900"
-                >
-                  {settings.shortName.charAt(0).toLocaleUpperCase("tr")}
-                </span>
-                <span className="font-display text-lg font-extrabold uppercase tracking-tight text-white">
-                  {settings.shortName}
-                  <span className="text-orange-500">.</span>
-                </span>
-              </span>
+            <Link
+              href="/"
+              aria-label={settings.name}
+              className="inline-flex"
+            >
+              <Logo onDark />
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-400">
               {settings.description}

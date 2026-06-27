@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { LoginForm } from "@/components/admin/login-form";
+import { signOut } from "@/lib/actions/auth";
 import { site } from "@/lib/site";
 import type { SearchParamsRecord } from "@/lib/catalog-params";
 
@@ -17,6 +18,7 @@ export default async function AdminLoginPage({
 }) {
   const sp = await searchParams;
   const next = typeof sp.next === "string" ? sp.next : "/admin";
+  const denied = sp.denied === "1";
   const configured = isSupabaseConfigured();
 
   return (
@@ -40,6 +42,21 @@ export default async function AdminLoginPage({
             Yönetim Paneli
           </p>
         </div>
+
+        {denied ? (
+          <div className="mb-4 rounded-sm border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">
+            <p className="font-semibold">Bu hesap yetkili değil</p>
+            <p className="mt-1 text-danger/80">
+              Giriş yaptığınız hesap yönetim paneline erişim yetkisine sahip
+              değil. Yetkili bir hesapla giriş yapın.
+            </p>
+            <form action={signOut} className="mt-2">
+              <button type="submit" className="text-xs font-medium underline">
+                Oturumu kapat
+              </button>
+            </form>
+          </div>
+        ) : null}
 
         <div className="rounded-md border border-ink-200 bg-white p-6 shadow-flat">
           <LoginForm configured={configured} next={next} />
