@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Birtek Endüstriyel — B2B Tesisat Malzemeleri
 
-## Getting Started
+Endüstriyel tesisat malzemeleri için kurumsal **B2B web sitesi**: açık fiyatlı ürün
+kataloğu, sepet → teklif talebi ve admin panelinden iskontolu PDF teklif üretimi.
 
-First, run the development server:
+İçerik dili **Türkçe**, para birimi **TRY**, KDV **%20**.
+
+## Teknoloji
+
+- **Next.js 16** (App Router) + **TypeScript** (strict)
+- **Tailwind CSS v4** — tasarım token'ları `app/globals.css` `@theme` içinde merkezî
+- **Supabase** — Postgres + Storage + Auth (planlı)
+- **Zustand** — sepet state'i (localStorage persist)
+- **Lucide** — ince stroke ikonlar
+- Deploy hedefi: **Vercel**
+
+## Hızlı başlangıç
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+cp .env.example .env.local   # değerleri doldurun (opsiyonel — bkz. aşağı)
+pnpm dev                     # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> **Supabase olmadan da çalışır.** `.env.local` boşsa site, `lib/data/seed.ts`
+> içindeki seed verisiyle (8 marka, 6 kategori, 28 ürün) çalışır. Supabase
+> bağlanınca veri katmanı otomatik canlı veriye geçer.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase kurulumu (opsiyonel)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Supabase projesi oluşturun, `.env.local` içine `NEXT_PUBLIC_SUPABASE_URL`,
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` girin.
+2. Şema + RLS: `supabase/migrations/0001_init.sql` çalıştırın.
+3. Seed: `pnpm db:seed-sql` ile güncel `supabase/seed.sql` üretip çalıştırın.
 
-## Learn More
+## Komutlar
 
-To learn more about Next.js, take a look at the following resources:
+| Komut | Açıklama |
+|---|---|
+| `pnpm dev` | Geliştirme sunucusu |
+| `pnpm build` | Üretim derlemesi |
+| `pnpm start` | Üretim sunucusu |
+| `pnpm lint` | ESLint |
+| `pnpm db:seed-sql` | `lib/data/seed.ts` → `supabase/seed.sql` üretir |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Dizin yapısı
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/                  Rotalar (App Router)
+components/ui/         Tasarım sistemi bileşenleri (shadcn deseni, özelleştirilmiş)
+components/site/       Header, footer, WhatsApp float, sayfa başlığı
+components/catalog/    Ürün kartı, filtreler, toolbar, sayfalama
+lib/data/             seed.ts (kanonik veri) + catalog.ts (veri katmanı)
+lib/supabase/         Client / server / admin + DB tipleri
+lib/store/            Zustand sepet
+supabase/             SQL migration + seed
+```
 
-## Deploy on Vercel
+## Faz durumu
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [x] **Faz 1** — Temel + tasarım sistemi, anasayfa, hakkımızda
+- [x] **Faz 2** — Supabase şema/RLS/seed, katalog, marka, ürün detay, fiyat listesi, sepet
+- [ ] **Faz 3** — Teklif talebi (Server Action) + Resend e-postaları, iletişim formu
+- [ ] **Faz 4** — Admin auth, iskontolu teklif oluşturucu, `@react-pdf/renderer` PDF, CSV import
