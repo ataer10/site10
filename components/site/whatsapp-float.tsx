@@ -1,12 +1,17 @@
 import { MessageCircle } from "lucide-react";
-import { whatsappLink, site } from "@/lib/site";
+import { whatsappLink, defaultSettings, type SiteSettings } from "@/lib/site";
 
 /** Sağ altta sabit WhatsApp butonu — tüm sayfalarda. */
-export function WhatsAppFloat() {
+export function WhatsAppFloat({
+  settings = defaultSettings,
+}: {
+  settings?: SiteSettings;
+}) {
   return (
     <a
       href={whatsappLink(
-        `Merhaba, ${site.name} ürünleri hakkında bilgi almak istiyorum.`,
+        settings.whatsapp,
+        `Merhaba, ${settings.name} ürünleri hakkında bilgi almak istiyorum.`,
       )}
       target="_blank"
       rel="noopener noreferrer"

@@ -3,6 +3,7 @@
 import { contactSchema, type ContactInput } from "@/lib/validation";
 import { sendEmail, COMPANY_EMAIL } from "@/lib/email/client";
 import { contactToCompany } from "@/lib/email/templates";
+import { getSettings } from "@/lib/data/settings";
 
 export type ContactResult =
   | { ok: true; emailed: boolean }
@@ -19,10 +20,11 @@ export async function sendContactMessage(
 
   let emailed = false;
   if (COMPANY_EMAIL) {
+    const settings = await getSettings();
     const r = await sendEmail({
       to: COMPANY_EMAIL,
       replyTo: c.email,
-      ...contactToCompany(c),
+      ...contactToCompany(c, settings),
     });
     emailed = r.sent;
   } else {

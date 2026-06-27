@@ -7,17 +7,23 @@ import {
   LayoutDashboard,
   FileText,
   Package,
+  Tags,
+  Library,
+  Settings,
   LogOut,
   ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/lib/actions/auth";
-import { site } from "@/lib/site";
+import { defaultSettings as site } from "@/lib/site";
 
 const nav = [
   { title: "Panel", href: "/admin", icon: LayoutDashboard, exact: true },
   { title: "Teklifler", href: "/admin/teklifler", icon: FileText },
   { title: "Ürünler", href: "/admin/urunler", icon: Package },
+  { title: "Markalar", href: "/admin/markalar", icon: Tags },
+  { title: "Kataloglar", href: "/admin/kataloglar", icon: Library },
+  { title: "Ayarlar", href: "/admin/ayarlar", icon: Settings },
 ];
 
 export function AdminSidebar({ email }: { email: string | null }) {

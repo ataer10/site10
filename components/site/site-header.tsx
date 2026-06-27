@@ -5,12 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone, ShoppingCart, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { mainNav, site } from "@/lib/site";
+import { mainNav, defaultSettings, type SiteSettings } from "@/lib/site";
 import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
 import { useCart, selectCount, useCartHydrated } from "@/lib/store/cart";
 
-export function SiteHeader() {
+export function SiteHeader({
+  settings = defaultSettings,
+}: {
+  settings?: SiteSettings;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
 
@@ -28,18 +32,18 @@ export function SiteHeader() {
       <div className="hidden border-b border-ink-800 bg-ink-900 text-ink-300 lg:block">
         <div className="mx-auto flex h-9 max-w-[1280px] items-center justify-between px-8 text-xs">
           <p className="font-mono uppercase tracking-wide text-ink-400">
-            {site.tagline} · B2B Tedarik
+            {settings.tagline} · B2B Tedarik
           </p>
           <div className="flex items-center gap-6">
             <a
-              href={site.phoneHref}
+              href={settings.phoneHref}
               className="inline-flex items-center gap-1.5 transition-colors hover:text-white"
             >
               <Phone className="size-3.5" strokeWidth={1.5} />
-              {site.phone}
+              {settings.phone}
             </a>
             <span className="text-ink-600">|</span>
-            <span>{site.workingHours}</span>
+            <span>{settings.workingHours}</span>
           </div>
         </div>
       </div>
@@ -47,8 +51,8 @@ export function SiteHeader() {
       {/* Ana bar */}
       <div className="border-b border-border bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
         <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-          <Link href="/" aria-label={site.name} className="shrink-0">
-            <Logo showTagline />
+          <Link href="/" aria-label={settings.name} className="shrink-0">
+            <Logo showTagline shortName={settings.shortName} tagline={settings.tagline} />
           </Link>
 
           {/* Masaüstü nav */}

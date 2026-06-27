@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { site } from "@/lib/site";
+import { getSettings } from "@/lib/data/settings";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -23,23 +23,26 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: `${site.name} — ${site.tagline}`,
-    template: `%s | ${site.name}`,
-  },
-  description: site.description,
-  openGraph: {
-    type: "website",
-    locale: "tr_TR",
-    siteName: site.name,
-    title: `${site.name} — ${site.tagline}`,
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSettings();
+  return {
+    metadataBase: new URL(site.url),
+    title: {
+      default: `${site.name} — ${site.tagline}`,
+      template: `%s | ${site.name}`,
+    },
     description: site.description,
-    url: site.url,
-  },
-  robots: { index: true, follow: true },
-};
+    openGraph: {
+      type: "website",
+      locale: "tr_TR",
+      siteName: site.name,
+      title: `${site.name} — ${site.tagline}`,
+      description: site.description,
+      url: site.url,
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export default function RootLayout({
   children,

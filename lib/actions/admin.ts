@@ -15,12 +15,26 @@ import {
   importProducts,
   type ProductInput,
 } from "@/lib/data/admin-products";
+import {
+  createBrand,
+  updateBrand,
+  deleteBrand,
+  type BrandInput,
+} from "@/lib/data/admin-brands";
+import {
+  createCatalog,
+  updateCatalog,
+  deleteCatalog,
+  type CatalogInput,
+} from "@/lib/data/admin-catalogs";
+import { updateSettings, type SettingsInput } from "@/lib/data/settings";
 import { isSupabaseAdminConfigured } from "@/lib/supabase/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { renderQuotePdf } from "@/lib/pdf/quote-pdf";
 import { calcQuote } from "@/lib/quote-calc";
 import { sendEmail, COMPANY_EMAIL } from "@/lib/email/client";
 import { quoteReadyToCustomer } from "@/lib/email/templates";
+import { getSettings } from "@/lib/data/settings";
 import { slugify } from "@/lib/slug";
 
 /* ----------------------------- Teklif ----------------------------- */
@@ -72,12 +86,16 @@ export async function sendQuoteToCustomerAction(
     quote.globalDiscountRate,
   );
 
-  const mail = quoteReadyToCustomer({
-    quoteNumber: quote.quoteNumber,
-    customerName: quote.customerName,
-    grandTotal: totals.grandTotal,
-    validUntil: quote.validUntil,
-  });
+  const settings = await getSettings();
+  const mail = quoteReadyToCustomer(
+    {
+      quoteNumber: quote.quoteNumber,
+      customerName: quote.customerName,
+      grandTotal: totals.grandTotal,
+      validUntil: quote.validUntil,
+    },
+    settings,
+  );
   const r = await sendEmail({
     to: quote.email,
     replyTo: COMPANY_EMAIL,
@@ -126,6 +144,83 @@ export async function importProductsAction(rows: Record<string, string>[]) {
   return res;
 }
 
+/* ------------------------------ Markalar ------------------------------ */
+
+export async function saveBrandAction(id: string | null, input: BrandInput) {
+  const res = id ? await updateBrand(id, input) : await createBrand(input);
+  if (res.ok) {
+    revalidatePath("/admin/markalar");
+    revalidatePath("/markalar");
+  }
+  return res;
+}
+
+export async function deleteBrandAction(id: string) {
+  const res = await deleteBrand(id);
+  if (res.ok) {
+    revalidatePath("/admin/markalar");
+    revalidatePath("/markalar");
+  }
+  return res;
+}
+
+/* ------------------------------ Kataloglar ------------------------------ */
+
+export async function saveCatalogAction(
+  id: string | null,
+  input: CatalogInput,
+) {
+  const res = id ? await updateCatalog(id, input) : await createCatalog(input);
+  if (res.ok) {
+    revalidatePath("/admin/kataloglar");
+    revalidatePath("/kataloglar");
+  }
+  return res;
+}
+
+export async function deleteCatalogAction(id: string) {
+  const res = await deleteCatalog(id);
+  if (res.ok) {
+    revalidatePath("/admin/kataloglar");
+    revalidatePath("/kataloglar");
+  }
+  return res;
+}
+
+/** Katalog PDF / kapak yükleme — catalogs bucket. */
+export async function uploadCatalogFileAction(
+  formData: FormData,
+): Promise<UploadResult> {
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: "Dosya seçilmedi." };
+  }
+  if (!isSupabaseAdminConfigured()) {
+    return { ok: false, error: "Yükleme için Supabase yapılandırılmalı (demo)." };
+  }
+  const admin = createAdminClient();
+  const ext = file.name.split(".").pop() ?? "bin";
+  const key = `${slugify(file.name.replace(/\.[^.]+$/, "")) || "katalog"}-${Date.now()}.${ext}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const { error } = await admin.storage
+    .from("catalogs")
+    .upload(key, buffer, { contentType: file.type, upsert: true });
+  if (error) return { ok: false, error: error.message };
+  const { data } = admin.storage.from("catalogs").getPublicUrl(key);
+  return { ok: true, url: data.publicUrl };
+}
+
+/* ------------------------------ Ayarlar ------------------------------ */
+
+export async function saveSettingsAction(input: SettingsInput) {
+  const res = await updateSettings(input);
+  if (res.ok) {
+    // Header/footer/iletişim/PDF her yerde güncellensin
+    revalidatePath("/", "layout");
+  }
+  return res;
+}
+
 /* -------------------------- Görsel yükleme -------------------------- */
 
 export type UploadResult =
@@ -156,5 +251,28 @@ export async function uploadProductImageAction(
   if (error) return { ok: false, error: error.message };
 
   const { data } = admin.storage.from("product-images").getPublicUrl(key);
+  return { ok: true, url: data.publicUrl };
+}
+
+/** Marka logo/katalog yükleme — brand-assets bucket. */
+export async function uploadBrandAssetAction(
+  formData: FormData,
+): Promise<UploadResult> {
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: "Dosya seçilmedi." };
+  }
+  if (!isSupabaseAdminConfigured()) {
+    return { ok: false, error: "Yükleme için Supabase yapılandırılmalı (demo)." };
+  }
+  const admin = createAdminClient();
+  const ext = file.name.split(".").pop() ?? "bin";
+  const key = `${slugify(file.name.replace(/\.[^.]+$/, "")) || "marka"}-${Date.now()}.${ext}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const { error } = await admin.storage
+    .from("brand-assets")
+    .upload(key, buffer, { contentType: file.type, upsert: true });
+  if (error) return { ok: false, error: error.message };
+  const { data } = admin.storage.from("brand-assets").getPublicUrl(key);
   return { ok: true, url: data.publicUrl };
 }

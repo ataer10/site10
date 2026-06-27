@@ -4,18 +4,20 @@ import { PageHeader } from "@/components/site/page-header";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { ContactForm } from "@/components/site/contact-form";
-import { site, whatsappLink } from "@/lib/site";
+import { whatsappLink } from "@/lib/site";
+import { getSettings } from "@/lib/data/settings";
 
 export const metadata: Metadata = {
   title: "İletişim",
   description:
-    "Birtek Endüstriyel ile iletişime geçin — adres, telefon, e-posta, WhatsApp ve iletişim formu.",
+    "Adres, telefon, e-posta, WhatsApp ve iletişim formu ile bize ulaşın.",
 };
 
-const fullAddress = `${site.address.line1}, ${site.address.line2}, ${site.address.city}, ${site.address.country}`;
-const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&z=14&output=embed`;
+export default async function IletisimPage() {
+  const settings = await getSettings();
+  const fullAddress = `${settings.address.line1}, ${settings.address.line2}, ${settings.address.city}, ${settings.address.country}`;
+  const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&z=14&output=embed`;
 
-export default function IletisimPage() {
   return (
     <>
       <PageHeader
@@ -31,22 +33,22 @@ export default function IletisimPage() {
             <div className="rounded-md border border-ink-200 bg-white">
               <ul className="divide-y divide-ink-100">
                 <InfoItem icon={MapPin} label="Adres">
-                  {site.address.line1}, {site.address.line2}
+                  {settings.address.line1}, {settings.address.line2}
                   <br />
-                  {site.address.city} / {site.address.country}
+                  {settings.address.city} / {settings.address.country}
                 </InfoItem>
                 <InfoItem icon={Phone} label="Telefon">
-                  <a href={site.phoneHref} className="hover:text-steel-600">
-                    {site.phone}
+                  <a href={settings.phoneHref} className="hover:text-steel-600">
+                    {settings.phone}
                   </a>
                 </InfoItem>
                 <InfoItem icon={Mail} label="E-posta">
-                  <a href={`mailto:${site.email}`} className="hover:text-steel-600">
-                    {site.email}
+                  <a href={`mailto:${settings.email}`} className="hover:text-steel-600">
+                    {settings.email}
                   </a>
                 </InfoItem>
                 <InfoItem icon={Clock} label="Çalışma Saatleri">
-                  {site.workingHours}
+                  {settings.workingHours}
                 </InfoItem>
               </ul>
             </div>
@@ -54,7 +56,8 @@ export default function IletisimPage() {
             {/* WhatsApp */}
             <a
               href={whatsappLink(
-                `Merhaba, ${site.name} ile iletişime geçmek istiyorum.`,
+                settings.whatsapp,
+                `Merhaba, ${settings.name} ile iletişime geçmek istiyorum.`,
               )}
               target="_blank"
               rel="noopener noreferrer"

@@ -1,5 +1,5 @@
 import { formatPrice } from "@/lib/utils";
-import { site } from "@/lib/site";
+import { defaultSettings, type SiteSettings } from "@/lib/site";
 
 export type QuoteEmailItem = {
   name: string;
@@ -32,7 +32,11 @@ const C = {
   bg: "#F7F8F9",
 };
 
-function layout(title: string, body: string): string {
+function layout(
+  title: string,
+  body: string,
+  site: SiteSettings = defaultSettings,
+): string {
   return `<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:${C.bg};font-family:Arial,Helvetica,sans-serif;color:${C.ink};">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};padding:24px 0;">
@@ -97,7 +101,10 @@ function infoRow(label: string, value?: string | null): string {
 }
 
 /** Firmaya: yeni teklif talebi. */
-export function newQuoteToCompany(d: QuoteEmailData): { subject: string; html: string } {
+export function newQuoteToCompany(
+  d: QuoteEmailData,
+  site: SiteSettings = defaultSettings,
+): { subject: string; html: string } {
   const body = `
 <p style="margin:0 0 16px;font-size:14px;color:${C.muted};">Yeni bir teklif talebi alındı. Teklif no: <strong style="color:${C.ink};font-family:monospace;">${d.quoteNumber}</strong></p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};border:1px solid ${C.border};padding:14px 16px;margin-bottom:20px;">
@@ -114,11 +121,14 @@ ${
     ? `<div style="margin-top:24px;"><a href="${d.adminUrl}" style="display:inline-block;background:${C.steel};color:#ffffff;text-decoration:none;font-size:14px;font-weight:bold;padding:12px 22px;border-radius:3px;">Admin panelinde teklifi aç</a></div>`
     : ""
 }`;
-  return { subject: `Yeni Teklif Talebi — ${d.quoteNumber}`, html: layout("Yeni teklif talebi", body) };
+  return { subject: `Yeni Teklif Talebi — ${d.quoteNumber}`, html: layout("Yeni teklif talebi", body, site) };
 }
 
 /** Müşteriye: talep alındı onayı. */
-export function quoteReceivedToCustomer(d: QuoteEmailData): { subject: string; html: string } {
+export function quoteReceivedToCustomer(
+  d: QuoteEmailData,
+  site: SiteSettings = defaultSettings,
+): { subject: string; html: string } {
   const body = `
 <p style="margin:0 0 16px;font-size:14px;color:${C.ink};">Sayın ${escapeHtml(d.customerName)},</p>
 <p style="margin:0 0 16px;font-size:14px;color:${C.muted};">Teklif talebiniz tarafımıza ulaştı. Ekibimiz iskontolu resmi teklifinizi hazırlayıp en kısa sürede (genellikle 24 saat içinde) e-posta ile paylaşacaktır.</p>
@@ -129,7 +139,7 @@ ${totalsBlock(d)}
 <p style="margin:20px 0 0;font-size:12px;color:${C.muted};">Not: Yukarıdaki tutarlar liste fiyatları üzerindendir; geçerli iskonto resmi teklifinizde uygulanacaktır.</p>`;
   return {
     subject: `Teklif talebiniz alındı — ${d.quoteNumber}`,
-    html: layout("Teklif talebiniz alındı", body),
+    html: layout("Teklif talebiniz alındı", body, site),
   };
 }
 
@@ -139,7 +149,7 @@ export function quoteReadyToCustomer(d: {
   customerName: string;
   grandTotal: number;
   validUntil?: string | null;
-}): { subject: string; html: string } {
+}, site: SiteSettings = defaultSettings): { subject: string; html: string } {
   const valid = d.validUntil
     ? new Intl.DateTimeFormat("tr-TR", { dateStyle: "long" }).format(new Date(d.validUntil))
     : null;
@@ -154,7 +164,7 @@ ${valid ? `<tr><td style="font-size:13px;color:${C.muted};">Geçerlilik</td><td 
 <p style="margin:0;font-size:13px;color:${C.muted};">Sorularınız için bu e-postayı yanıtlayabilir ya da bizi arayabilirsiniz. İlginiz için teşekkür ederiz.</p>`;
   return {
     subject: `Teklifiniz hazır — ${d.quoteNumber}`,
-    html: layout("İskontolu teklifiniz", body),
+    html: layout("İskontolu teklifiniz", body, site),
   };
 }
 
@@ -165,7 +175,7 @@ export function contactToCompany(c: {
   phone?: string | null;
   subject?: string | null;
   message: string;
-}): { subject: string; html: string } {
+}, site: SiteSettings = defaultSettings): { subject: string; html: string } {
   const body = `
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};border:1px solid ${C.border};padding:14px 16px;margin-bottom:18px;">
 ${infoRow("Ad Soyad", c.name)}
@@ -177,7 +187,7 @@ ${infoRow("Konu", c.subject)}
 <p style="margin:0;font-size:14px;line-height:1.6;color:${C.ink};white-space:pre-wrap;">${escapeHtml(c.message)}</p>`;
   return {
     subject: `İletişim Formu — ${c.subject ? c.subject : c.name}`,
-    html: layout("Yeni iletişim mesajı", body),
+    html: layout("Yeni iletişim mesajı", body, site),
   };
 }
 

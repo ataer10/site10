@@ -11,7 +11,8 @@ import {
 } from "@react-pdf/renderer";
 import { calcQuote } from "@/lib/quote-calc";
 import type { AdminQuote } from "@/lib/data/admin";
-import { site } from "@/lib/site";
+import { type SiteSettings } from "@/lib/site";
+import { getSettings } from "@/lib/data/settings";
 
 // Türkçe kapsamlı font (Helvetica ş/ğ/ı bozuyor)
 Font.register({
@@ -92,9 +93,11 @@ function fmtDate(d: Date): string {
 function QuoteDocument({
   quote,
   issued,
+  site,
 }: {
   quote: AdminQuote;
   issued: Date;
+  site: SiteSettings;
 }) {
   const items = quote.items ?? [];
   const totals = calcQuote(
@@ -235,8 +238,9 @@ function QuoteDocument({
 
 /** Teklifi PDF buffer'ına render eder. */
 export async function renderQuotePdf(quote: AdminQuote): Promise<Buffer> {
+  const site = await getSettings();
   const buf = await renderToBuffer(
-    <QuoteDocument quote={quote} issued={new Date()} />,
+    <QuoteDocument quote={quote} issued={new Date()} site={site} />,
   );
   return buf as Buffer;
 }

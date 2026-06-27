@@ -10,7 +10,7 @@ import {
   quoteReceivedToCustomer,
   type QuoteEmailItem,
 } from "@/lib/email/templates";
-import { site } from "@/lib/site";
+import { getSettings } from "@/lib/data/settings";
 
 type ResolvedItem = {
   productId: string | null;
@@ -174,6 +174,7 @@ export async function createQuote(
     unit: it.unit,
     listPrice: it.listPrice,
   }));
+  const settings = await getSettings();
   const emailData = {
     quoteNumber,
     customerName: data.customerName,
@@ -185,7 +186,7 @@ export async function createQuote(
     subtotal,
     vatTotal,
     grandTotal,
-    adminUrl: quoteId ? `${site.url}/admin/teklifler/${quoteId}` : undefined,
+    adminUrl: quoteId ? `${settings.url}/admin/teklifler/${quoteId}` : undefined,
   };
 
   let emailed = false;
@@ -193,14 +194,14 @@ export async function createQuote(
     const r = await sendEmail({
       to: COMPANY_EMAIL,
       replyTo: data.email,
-      ...newQuoteToCompany(emailData),
+      ...newQuoteToCompany(emailData, settings),
     });
     emailed = r.sent;
   }
   // Müşteriye onay
   await sendEmail({
     to: data.email,
-    ...quoteReceivedToCustomer(emailData),
+    ...quoteReceivedToCustomer(emailData, settings),
   });
 
   return { ok: true, quoteNumber, persisted, emailed };

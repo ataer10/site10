@@ -11,7 +11,7 @@ import { Container, SectionHeading } from "@/components/ui/container";
 import { PageHeader } from "@/components/site/page-header";
 import { Button } from "@/components/ui/button";
 import { homeStats } from "@/lib/content";
-import { site } from "@/lib/site";
+import { getSettings } from "@/lib/data/settings";
 
 export const metadata: Metadata = {
   title: "Hakkımızda",
@@ -49,7 +49,8 @@ const milestones = [
   { year: "2026", text: "Açık fiyatlı dijital katalog ve online teklif sistemi." },
 ];
 
-export default function HakkimizdaPage() {
+export default async function HakkimizdaPage() {
+  const site = await getSettings();
   return (
     <>
       <PageHeader

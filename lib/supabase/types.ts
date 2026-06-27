@@ -137,6 +137,72 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["quotes"]["Insert"]>;
         Relationships: [];
       };
+      catalogs: {
+        Row: {
+          id: string;
+          title: string;
+          brand_id: string | null;
+          pdf_url: string | null;
+          cover_url: string | null;
+          year: string | null;
+          description: string | null;
+          sort_order: number | null;
+          is_active: boolean | null;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          brand_id?: string | null;
+          pdf_url?: string | null;
+          cover_url?: string | null;
+          year?: string | null;
+          description?: string | null;
+          sort_order?: number | null;
+          is_active?: boolean | null;
+          created_at?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["catalogs"]["Insert"]>;
+        Relationships: [];
+      };
+      site_settings: {
+        Row: {
+          id: string;
+          company_name: string | null;
+          short_name: string | null;
+          tagline: string | null;
+          description: string | null;
+          email: string | null;
+          phone: string | null;
+          whatsapp: string | null;
+          address_line1: string | null;
+          address_line2: string | null;
+          city: string | null;
+          country: string | null;
+          working_hours: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          company_name?: string | null;
+          short_name?: string | null;
+          tagline?: string | null;
+          description?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          whatsapp?: string | null;
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          country?: string | null;
+          working_hours?: string | null;
+          updated_at?: string | null;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["site_settings"]["Insert"]
+        >;
+        Relationships: [];
+      };
       quote_items: {
         Row: {
           id: string;
