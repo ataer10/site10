@@ -70,7 +70,7 @@ export function CatalogFilters({
           <SlidersHorizontal strokeWidth={1.75} />
           Filtreler
           {hasActive ? (
-            <span className="ml-1 inline-grid size-5 place-items-center rounded-full bg-orange-500 text-[11px] font-bold text-white">
+            <span className="ml-1 inline-grid size-5 place-items-center rounded-full bg-steel-500 text-[11px] font-bold text-white">
               !
             </span>
           ) : null}

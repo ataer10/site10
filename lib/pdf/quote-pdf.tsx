@@ -47,7 +47,7 @@ const s = StyleSheet.create({
   },
   headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
   brand: { fontSize: 18, fontWeight: "bold", color: C.ink },
-  brandDot: { color: C.orange },
+  brandDot: { color: C.steel },
   tagline: { fontSize: 7, color: C.muted, marginTop: 2, textTransform: "uppercase", letterSpacing: 1 },
   docTitle: { fontSize: 16, fontWeight: "bold", color: C.steel, textAlign: "right" },
   docMeta: { fontSize: 8, color: C.muted, textAlign: "right", marginTop: 2 },

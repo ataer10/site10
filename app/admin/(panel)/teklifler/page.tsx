@@ -38,7 +38,7 @@ export default async function TekliflerPage({
             className={cn(
               "border-b-2 px-3 py-2 text-sm font-medium transition-colors",
               active === t.key
-                ? "border-orange-500 text-ink-900"
+                ? "border-steel-500 text-ink-900"
                 : "border-transparent text-ink-500 hover:text-ink-800",
             )}
           >

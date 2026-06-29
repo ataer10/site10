@@ -13,7 +13,7 @@ const buttonVariants = cva(
           "bg-steel-500 text-primary-foreground hover:bg-steel-600 active:bg-steel-700",
         // Güçlü CTA — endüstriyel turuncu (ölçülü kullan)
         accent:
-          "bg-accent text-accent-foreground hover:bg-orange-600 active:bg-orange-700",
+          "bg-accent text-accent-foreground hover:bg-steel-600 active:bg-steel-700",
         // Koyu nötr
         solid:
           "bg-ink-900 text-white hover:bg-ink-800 active:bg-ink-950",

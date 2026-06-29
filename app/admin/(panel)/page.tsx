@@ -35,7 +35,7 @@ export default async function AdminDashboard() {
             </p>
             <p
               className={`mt-2 font-display text-3xl font-extrabold tracking-tight tnum ${
-                c.accent && c.value > 0 ? "text-orange-600" : "text-ink-900"
+                c.accent && c.value > 0 ? "text-steel-600" : "text-ink-900"
               }`}
             >
               {c.value}

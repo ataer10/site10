@@ -97,6 +97,92 @@ export type Feature = {
     | "BadgeCheck";
 };
 
+/* ---------------------------- Hero slider ---------------------------- */
+
+export type HeroSlide = {
+  /** Üst etiket (mono kicker) — örn. "01 — Marka Vaadi" */
+  tag: string;
+  /** Büyük başlık; `accent` kelimesi çelik maviyle vurgulanır. */
+  title: string;
+  accent: string;
+  /** Başlık sonrası kalan metin (accent'ten sonra). */
+  titleTail?: string;
+  subtitle: string;
+  image: string;
+  imageAlt: string;
+  cta: { label: string; href: string };
+  secondary?: { label: string; href: string };
+};
+
+/** Açılış sineması — `public/img` görselleriyle, kategori/temaya bağlı. */
+export const heroSlides: HeroSlide[] = [
+  {
+    tag: "Endüstriyel Tesisat Tedariki",
+    title: "Doğru parça,",
+    accent: "net fiyat,",
+    titleTail: " hızlı teklif.",
+    subtitle:
+      "Vana, boru, pompa ve bağlantı elemanlarında binlerce ürün — açık liste fiyatıyla, üyeliksiz.",
+    image: "/img/pexels-sonny-vermeer-505472791-17728787.jpg",
+    imageAlt: "Geniş endüstriyel tesisat ve boru hattı tesisi",
+    cta: { label: "Kataloğu İncele", href: "/urunler" },
+    secondary: { label: "Fiyat Listesi", href: "/fiyat-listesi" },
+  },
+  {
+    tag: "Vana & Armatür",
+    title: "Vanada",
+    accent: "her ölçü,",
+    titleTail: " her standart.",
+    subtitle:
+      "Küresel, kelebek, çek valf ve endüstriyel armatürler — PN16'dan yüksek basınca, orijinal ve faturalı.",
+    image: "/img/pexels-88107820-10116844.jpg",
+    imageAlt: "Endüstriyel turuncu vana ve hidrant kolonları",
+    cta: { label: "Vanaları Gör", href: "/urunler?kategori=vana-armatur" },
+    secondary: { label: "Tüm kategoriler", href: "/urunler" },
+  },
+  {
+    tag: "Boru & Bağlantı",
+    title: "Bağlantıda",
+    accent: "sızdırmaz",
+    titleTail: " çözüm.",
+    subtitle:
+      "Çelik, paslanmaz ve PPRC boru, dirsek, te ve fittings — projeye uygun her çapta eksiksiz tedarik.",
+    image: "/img/pexels-sonny-29248902.jpg",
+    imageAlt: "Paslanmaz çelik boru ve bağlantı parçaları",
+    cta: { label: "Boru & Fittings", href: "/urunler?kategori=boru-fittings" },
+    secondary: { label: "Markalar", href: "/markalar" },
+  },
+  {
+    tag: "Resmi Teklif",
+    title: "İskontolu teklif,",
+    accent: "24 saatte",
+    titleTail: " e-postanızda.",
+    subtitle:
+      "Sepetinizi oluşturun, malzeme listenizi gönderin; iskontolu resmi teklifinizi PDF olarak hızla alın.",
+    image: "/img/pexels-marianna-zuzanna-498248397-16442684.jpg",
+    imageAlt: "Tesisat hattında çalışan teknik ekip",
+    cta: { label: "Teklif İste", href: "/teklif-iste" },
+    secondary: { label: "Nasıl çalışır?", href: "/hakkimizda" },
+  },
+];
+
+/** Komuta çubuğu hızlı kategori çipleri. */
+export const heroChips: { label: string; slug: string }[] = [
+  { label: "Vanalar", slug: "vana-armatur" },
+  { label: "Borular", slug: "boru-fittings" },
+  { label: "Pompalar", slug: "pompa-hidrofor" },
+  { label: "Isıtma", slug: "isitma-tesisat" },
+  { label: "Bağlantı", slug: "baglanti-elemanlari" },
+  { label: "Ölçü & Kontrol", slug: "olcu-kontrol" },
+];
+
+/** Komuta çubuğu altı güven mikro-şeridi. */
+export const heroTrust = [
+  "Açık liste fiyatları",
+  "Üyeliksiz teklif",
+  "Orijinal & faturalı",
+];
+
 export const homeFeatures: Feature[] = [
   {
     title: "Açık Liste Fiyatı",

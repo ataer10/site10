@@ -43,7 +43,7 @@ function layout(
 <tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid ${C.border};">
   <tr><td style="background:${C.ink};padding:20px 28px;">
-    <span style="font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;text-transform:uppercase;">${site.shortName}<span style="color:${C.orange};">.</span></span>
+    <span style="font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;text-transform:uppercase;">${site.shortName}<span style="color:#6E92AF;">.</span></span>
     <span style="font-size:11px;color:#9AA1AB;letter-spacing:1px;text-transform:uppercase;margin-left:8px;">${site.tagline}</span>
   </td></tr>
   <tr><td style="padding:28px;">

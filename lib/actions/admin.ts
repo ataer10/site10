@@ -28,6 +28,9 @@ import {
   type CatalogInput,
 } from "@/lib/data/admin-catalogs";
 import { updateSettings, type SettingsInput } from "@/lib/data/settings";
+import { updateHeroSlides, type HeroSlideInput } from "@/lib/data/hero";
+import { validateHeroImage } from "@/lib/hero-image";
+import { imageSize } from "@/lib/image-size";
 import { isSupabaseAdminConfigured } from "@/lib/supabase/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { renderQuotePdf } from "@/lib/pdf/quote-pdf";
@@ -221,10 +224,73 @@ export async function saveSettingsAction(input: SettingsInput) {
   return res;
 }
 
+/* ------------------------------- Hero ------------------------------- */
+
+export async function saveHeroAction(slides: HeroSlideInput[]) {
+  const res = await updateHeroSlides(slides);
+  if (res.ok) {
+    // Anasayfa hero'su yeniden üretilsin
+    revalidatePath("/", "layout");
+  }
+  return res;
+}
+
+/**
+ * Hero görseli yükleme — site-assets bucket. Format + boyut + ölçü (server'da
+ * header'dan okunan gerçek genişlik/yükseklik) sıkı doğrulanır; geçmezse reddedilir.
+ */
+export async function uploadHeroImageAction(
+  formData: FormData,
+): Promise<UploadResult> {
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { ok: false, error: "Dosya seçilmedi." };
+  }
+  // 1) Format + boyut (ölçüden bağımsız ön denetim)
+  const pre = validateHeroImage({ type: file.type, size: file.size });
+  if (pre) return { ok: false, error: pre };
+
+  if (!isSupabaseAdminConfigured()) {
+    return {
+      ok: false,
+      error: "Görsel yükleme için Supabase yapılandırılmalı (demo modu).",
+    };
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  // 2) Gerçek ölçüyü header'dan oku ve doğrula (kullanıcı atlatamasın)
+  const dim = imageSize(buffer);
+  if (!dim) {
+    return {
+      ok: false,
+      error: "Görsel çözümlenemedi (bozuk dosya ya da desteklenmeyen biçim).",
+    };
+  }
+  const dimErr = validateHeroImage({
+    type: file.type,
+    size: file.size,
+    width: dim.width,
+    height: dim.height,
+  });
+  if (dimErr) return { ok: false, error: dimErr };
+
+  const admin = createAdminClient();
+  const ext = file.name.split(".").pop() ?? "jpg";
+  const key = `hero/${slugify(file.name.replace(/\.[^.]+$/, "")) || "hero"}-${Date.now()}.${ext}`;
+  const { error } = await admin.storage
+    .from("site-assets")
+    .upload(key, buffer, { contentType: file.type, upsert: true });
+  if (error) return { ok: false, error: error.message };
+
+  const { data } = admin.storage.from("site-assets").getPublicUrl(key);
+  return { ok: true, url: data.publicUrl, width: dim.width, height: dim.height };
+}
+
 /* -------------------------- Görsel yükleme -------------------------- */
 
 export type UploadResult =
-  | { ok: true; url: string }
+  | { ok: true; url: string; width?: number; height?: number }
   | { ok: false; error: string };
 
 export async function uploadProductImageAction(

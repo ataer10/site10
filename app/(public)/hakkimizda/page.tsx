@@ -156,7 +156,7 @@ export default async function HakkimizdaPage() {
           <ol className="mt-10 grid gap-px overflow-hidden rounded-md border border-ink-200 bg-ink-200 sm:grid-cols-2 lg:grid-cols-4">
             {milestones.map((m) => (
               <li key={m.year} className="bg-white p-6">
-                <span className="font-mono text-sm font-medium text-orange-600">
+                <span className="font-mono text-sm font-medium text-steel-600">
                   {m.year}
                 </span>
                 <p className="mt-2 text-sm leading-relaxed text-ink-600">

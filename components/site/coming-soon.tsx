@@ -20,7 +20,7 @@ export function ComingSoon({
         <span className="grid size-14 place-items-center rounded-md border border-ink-200 bg-ink-50 text-steel-600">
           <Construction className="size-6" strokeWidth={1.5} />
         </span>
-        <p className="mt-6 font-mono text-xs uppercase tracking-[0.18em] text-orange-600">
+        <p className="mt-6 font-mono text-xs uppercase tracking-[0.18em] text-steel-600">
           {phase}
         </p>
         <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-ink-900">

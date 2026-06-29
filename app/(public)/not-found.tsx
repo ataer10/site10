@@ -18,7 +18,7 @@ export default function NotFound() {
         <span className="grid size-14 place-items-center rounded-md border border-ink-200 bg-ink-50 text-steel-600">
           <Compass className="size-7" strokeWidth={1.5} />
         </span>
-        <p className="mt-6 font-mono text-sm uppercase tracking-[0.18em] text-orange-600">
+        <p className="mt-6 font-mono text-sm uppercase tracking-[0.18em] text-steel-600">
           404
         </p>
         <h1 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-ink-900">

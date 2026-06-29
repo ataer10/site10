@@ -54,7 +54,8 @@
   --color-ring: var(--color-steel-500);
   --color-primary: var(--color-steel-500);
   --color-primary-foreground: #ffffff;
-  --color-accent: var(--color-orange-500);
+  /* Aksan artık endüstriyel turuncu değil; koyu çelik mavisi (CTA = mavi + beyaz) */
+  --color-accent: var(--color-steel-500);
   --color-accent-foreground: #ffffff;
   --color-success: #1f7a4d;
   --color-warning: #b45309;
@@ -143,5 +144,92 @@
 
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Koyu zemin üstünde ince teknik ızgara (hero overlay) */
+  .bg-blueprint {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+
+  /* Komuta çubuğu / mini panel için koyu cam yüzey */
+  .glass-dark {
+    background-color: rgb(13 14 18 / 0.55);
+    backdrop-filter: blur(14px) saturate(1.1);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Hero — sinematik slider hareketi                                  */
+/* ------------------------------------------------------------------ */
+@keyframes birtek-kenburns {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1.16);
+  }
+}
+
+@keyframes birtek-fillbar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes birtek-fadeup {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aktif slaytta yavaş zoom; pasif slaytta sabit. */
+.birtek-kenburns {
+  transform-origin: center;
+  animation: birtek-kenburns 7200ms var(--ease-industrial) forwards;
+}
+
+/* Aktif slayt içeriği — yumuşak yukarı belirme. */
+.birtek-fadeup > * {
+  animation: birtek-fadeup 600ms var(--ease-industrial) both;
+}
+.birtek-fadeup > *:nth-child(2) {
+  animation-delay: 70ms;
+}
+.birtek-fadeup > *:nth-child(3) {
+  animation-delay: 140ms;
+}
+.birtek-fadeup > *:nth-child(4) {
+  animation-delay: 210ms;
+}
+
+/* Otomatik ilerleme göstergesi — süre JS'ten --birtek-dur ile gelir. */
+.birtek-fillbar {
+  transform-origin: left;
+  animation: birtek-fillbar var(--birtek-dur, 6000ms) linear forwards;
+}
+
+/* Hover/focus duraklatması — slider kökündeki data-paused tetikler. */
+.birtek-slider[data-paused="true"] .birtek-kenburns,
+.birtek-slider[data-paused="true"] .birtek-fillbar {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .birtek-kenburns,
+  .birtek-fillbar,
+  .birtek-fadeup > * {
+    animation: none !important;
+    transform: none !important;
   }
 }

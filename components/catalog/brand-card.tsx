@@ -20,7 +20,7 @@ export function BrandCard({
           {brand.name}
         </span>
         <ArrowUpRight
-          className="size-5 text-ink-300 transition-colors group-hover:text-orange-500"
+          className="size-5 text-ink-300 transition-colors group-hover:text-steel-500"
           strokeWidth={1.5}
         />
       </Link>

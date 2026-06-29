@@ -35,7 +35,7 @@ export default async function AdminLoginPage({
             </span>
             <span className="font-display text-xl font-extrabold uppercase tracking-tight text-ink-900">
               {site.shortName}
-              <span className="text-orange-500">.</span>
+              <span className="text-steel-500">.</span>
             </span>
           </Link>
           <p className="mt-3 font-mono text-xs uppercase tracking-[0.18em] text-ink-400">

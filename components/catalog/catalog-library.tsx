@@ -194,7 +194,7 @@ function CatalogCard({ catalog }: { catalog: Catalog }) {
         ) : (
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-grid opacity-[0.07]" aria-hidden />
-            <span className="absolute left-3 top-3 h-0.5 w-7 bg-orange-500" aria-hidden />
+            <span className="absolute left-3 top-3 h-0.5 w-7 bg-steel-500" aria-hidden />
             <span className="absolute left-3 right-3 top-5 truncate font-mono text-[10px] uppercase tracking-[0.16em] text-steel-300">
               {brandName}
             </span>

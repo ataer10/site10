@@ -1,27 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  CircleCheckBig,
-  FileDown,
-  Quote,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, FileDown, Quote } from "lucide-react";
 import { Container, SectionHeading } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/site/icon";
 import { CoverImage } from "@/components/site/media";
 import { BrandStrip } from "@/components/site/brand-strip";
+import { HeroSlider } from "@/components/site/hero/hero-slider";
+import { getHeroSlides } from "@/lib/data/hero";
 import { homeCategories, homeFeatures, homeStats } from "@/lib/content";
-import { formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: { url: "/" },
 };
-
-const heroTrust = ["Açık liste fiyatları", "Üyeliksiz teklif", "Orijinal & faturalı"];
 
 /** Kategori → kapak görseli (olmayanlar koyu desenli kartla gösterilir). */
 const CAT_IMG: Record<string, string> = {
@@ -33,81 +25,12 @@ const CAT_IMG: Record<string, string> = {
   "olcu-kontrol": "/img/cat-olcu.jpg",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const heroSlides = await getHeroSlides();
   return (
     <>
-      {/* ============================ HERO ============================ */}
-      <section className="relative overflow-hidden border-b border-border bg-white">
-        <div className="absolute inset-0 bg-grid opacity-[0.35]" aria-hidden />
-        <Container className="relative grid items-center gap-10 py-14 lg:grid-cols-12 lg:gap-12 lg:py-24">
-          {/* Sol: metin */}
-          <div className="order-2 lg:order-1 lg:col-span-6 lg:pr-6">
-            <Badge variant="steel" className="mb-5">
-              <span className="size-1.5 rounded-full bg-orange-500" />
-              Endüstriyel Tesisat Tedariki · B2B
-            </Badge>
-            <h1 className="font-display text-4xl font-extrabold leading-[1.04] tracking-tight text-ink-900 text-balance sm:text-5xl xl:text-[3.4rem]">
-              Tesisat malzemesinde{" "}
-              <span className="text-steel-600">doğru parça,</span> net fiyat,
-              hızlı teklif.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-600">
-              Vana, boru, pompa ve bağlantı elemanlarında binlerce ürün — açık
-              liste fiyatıyla. Sepetinizi oluşturun, iskontolu resmi teklifinizi
-              24 saat içinde alın.
-            </p>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild variant="accent" size="lg">
-                <Link href="/urunler">
-                  Kataloğu İncele
-                  <ArrowRight strokeWidth={1.75} />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/teklif-iste">Teklif İste</Link>
-              </Button>
-            </div>
-
-            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
-              {heroTrust.map((t) => (
-                <li
-                  key={t}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-ink-600"
-                >
-                  <CircleCheckBig className="size-4 text-steel-500" strokeWidth={1.75} />
-                  {t}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Sağ: kahraman görsel + çakışan teklif kartı */}
-          <div className="relative order-1 lg:order-2 lg:col-span-6 lg:pb-10">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-md border border-ink-200 shadow-raised sm:aspect-[3/2] lg:ml-auto lg:aspect-[4/5] lg:max-w-md">
-              <CoverImage
-                src="/img/pexels-88107820-10116844.jpg"
-                alt="Endüstriyel turuncu vana ve hidrant kolonları"
-                priority
-                overlay="none"
-                sizes="(min-width: 1024px) 38vw, 100vw"
-              />
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(to top, rgb(13 14 18 / 0.35), transparent 45%)",
-                }}
-                aria-hidden
-              />
-            </div>
-            {/* Teklif önizleme kartı — masaüstünde görsele çakışır */}
-            <div className="mt-4 lg:absolute lg:-bottom-2 lg:left-0 lg:mt-0 lg:w-[19rem] xl:w-80">
-              <QuotePreviewCard />
-            </div>
-          </div>
-        </Container>
-      </section>
+      {/* ===================== HERO — sinematik vitrin ===================== */}
+      <HeroSlider slides={heroSlides} />
 
       {/* ============================ STATS ============================ */}
       <section className="relative overflow-hidden border-b border-ink-800">
@@ -177,11 +100,11 @@ export default function HomePage() {
                     {cat.count}
                   </span>
                   <div className="mt-1 flex items-center justify-between gap-2">
-                    <h3 className="font-display text-lg font-bold tracking-tight text-white transition-colors group-hover:text-orange-400">
+                    <h3 className="font-display text-lg font-bold tracking-tight text-white transition-colors group-hover:text-steel-200">
                       {cat.title}
                     </h3>
                     <ArrowUpRight
-                      className="size-5 shrink-0 text-white/70 transition-colors group-hover:text-orange-400"
+                      className="size-5 shrink-0 text-white/70 transition-colors group-hover:text-steel-200"
                       strokeWidth={1.5}
                     />
                   </div>
@@ -298,59 +221,5 @@ export default function HomePage() {
         </Container>
       </section>
     </>
-  );
-}
-
-/* -------------------------------------------------------------------- */
-/*  Hero teknik teklif önizleme kartı                                   */
-/* -------------------------------------------------------------------- */
-function QuotePreviewCard() {
-  const items = [
-    { sku: "VN-DN50-PN16", name: "Küresel Vana DN50", qty: 8, price: 1240.0 },
-    { sku: "FT-PS-90-42", name: "Paslanmaz Dirsek 90°", qty: 24, price: 86.5 },
-    { sku: "PMP-CR5-12", name: "Sirkülasyon Pompası", qty: 2, price: 18950.0 },
-  ];
-  const subtotal = items.reduce((s, i) => s + i.qty * i.price, 0);
-
-  return (
-    <div className="overflow-hidden rounded-md border border-ink-300 bg-white shadow-raised">
-      <div className="flex items-center justify-between border-b border-ink-200 bg-ink-900 px-5 py-3.5">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-400">
-            Teklif Önizleme
-          </p>
-          <p className="font-mono text-sm font-medium text-white">TKL-2026-0148</p>
-        </div>
-        <Badge variant="accent" className="border-orange-400/30 bg-orange-500/15 text-orange-200">
-          Hazırlanıyor
-        </Badge>
-      </div>
-      <div className="divide-y divide-ink-100">
-        {items.map((it) => (
-          <div key={it.sku} className="flex items-center justify-between gap-4 px-5 py-3">
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-ink-900">{it.name}</p>
-              <p className="font-mono text-[11px] uppercase tracking-wide text-ink-400">
-                {it.sku} · {it.qty} adet
-              </p>
-            </div>
-            <p className="shrink-0 text-sm font-semibold text-ink-800 tnum">
-              {formatPrice(it.qty * it.price)}
-            </p>
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-between border-t border-ink-200 bg-ink-50 px-5 py-4">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-wide text-ink-500">
-            Ara Toplam (KDV hariç)
-          </p>
-          <p className="text-xs text-ink-400">İskonto teklifte uygulanır</p>
-        </div>
-        <p className="font-display text-xl font-extrabold text-ink-900 tnum">
-          {formatPrice(subtotal)}
-        </p>
-      </div>
-    </div>
   );
 }

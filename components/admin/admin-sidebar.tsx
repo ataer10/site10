@@ -10,6 +10,7 @@ import {
   Tags,
   Library,
   Settings,
+  GalleryHorizontalEnd,
   LogOut,
   ExternalLink,
 } from "lucide-react";
@@ -23,6 +24,7 @@ const nav = [
   { title: "Ürünler", href: "/admin/urunler", icon: Package },
   { title: "Markalar", href: "/admin/markalar", icon: Tags },
   { title: "Kataloglar", href: "/admin/kataloglar", icon: Library },
+  { title: "Hero / Vitrin", href: "/admin/hero", icon: GalleryHorizontalEnd },
   { title: "Ayarlar", href: "/admin/ayarlar", icon: Settings },
 ];
 
@@ -41,7 +43,7 @@ export function AdminSidebar({ email }: { email: string | null }) {
           </span>
           <span className="font-display text-base font-extrabold uppercase tracking-tight text-white">
             {site.shortName}
-            <span className="text-orange-500">.</span>
+            <span className="text-steel-500">.</span>
           </span>
         </Link>
         <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-500">

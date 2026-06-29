@@ -38,7 +38,7 @@ export function SectionHeading({
     >
       {kicker ? (
         <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-steel-500">
-          <span className="h-px w-6 bg-orange-500" aria-hidden />
+          <span className="h-px w-6 bg-steel-500" aria-hidden />
           {kicker}
         </span>
       ) : null}
