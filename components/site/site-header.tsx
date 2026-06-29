@@ -19,6 +19,7 @@ import { mainNav, defaultSettings, type SiteSettings } from "@/lib/site";
 import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
 import { SearchPalette } from "@/components/site/search-palette";
+import { QuoteCta } from "@/components/site/quote-cta";
 import {
   useCart,
   selectCount,
@@ -199,9 +200,7 @@ export function SiteHeader({
           <div className="flex items-center gap-2">
             <SearchPalette tone={light ? "light" : "dark"} />
             <CartButton settings={settings} light={light} />
-            <Button asChild variant="accent" className="hidden sm:inline-flex">
-              <Link href="/teklif-iste">Teklif İste</Link>
-            </Button>
+            <QuoteCta className="hidden sm:inline-flex" />
             <Button
               variant={light ? "ghost" : "outline"}
               size="icon"
@@ -554,11 +553,7 @@ function MobileDrawer({
         </nav>
 
         <div className="border-t border-border px-4 py-4">
-          <Button asChild variant="accent" className="w-full">
-            <Link href="/teklif-iste" onClick={onClose}>
-              Teklif İste
-            </Link>
-          </Button>
+          <QuoteCta className="w-full" onNavigate={onClose} />
           <div className="mt-4 space-y-2 text-sm text-ink-500">
             <a
               href={settings.phoneHref}

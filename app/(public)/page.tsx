@@ -7,6 +7,7 @@ import { Icon } from "@/components/site/icon";
 import { CoverImage } from "@/components/site/media";
 import { BrandStrip } from "@/components/site/brand-strip";
 import { HeroSlider } from "@/components/site/hero/hero-slider";
+import { QuoteCta } from "@/components/site/quote-cta";
 import { getHeroSlides } from "@/lib/data/hero";
 import { homeCategories, homeFeatures, homeStats } from "@/lib/content";
 
@@ -199,12 +200,10 @@ export default async function HomePage() {
               gönderelim.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild variant="accent" size="lg">
-                <Link href="/teklif-iste">
-                  <Quote strokeWidth={1.75} />
-                  Teklif İste
-                </Link>
-              </Button>
+              <QuoteCta variant="accent" size="lg">
+                <Quote strokeWidth={1.75} />
+                Teklif İste
+              </QuoteCta>
               <Button
                 asChild
                 size="lg"

@@ -11,6 +11,7 @@ import {
   Library,
   Settings,
   GalleryHorizontalEnd,
+  Mail,
   LogOut,
   ExternalLink,
 } from "lucide-react";
@@ -25,6 +26,7 @@ const nav = [
   { title: "Markalar", href: "/admin/markalar", icon: Tags },
   { title: "Kataloglar", href: "/admin/kataloglar", icon: Library },
   { title: "Hero / Vitrin", href: "/admin/hero", icon: GalleryHorizontalEnd },
+  { title: "E-posta (SMTP)", href: "/admin/eposta", icon: Mail },
   { title: "Ayarlar", href: "/admin/ayarlar", icon: Settings },
 ];
 

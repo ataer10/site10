@@ -101,7 +101,7 @@ export async function sendQuoteToCustomerAction(
   );
   const r = await sendEmail({
     to: quote.email,
-    replyTo: COMPANY_EMAIL,
+    replyTo: settings.email || COMPANY_EMAIL,
     subject: mail.subject,
     html: mail.html,
     attachments: [{ filename: `${quote.quoteNumber}.pdf`, content: pdf }],

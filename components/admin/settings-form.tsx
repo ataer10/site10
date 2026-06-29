@@ -53,7 +53,9 @@ export function SettingsForm({
 
       <Card title="İletişim">
         <div className="grid gap-4 sm:grid-cols-2">
-          <F label="E-posta"><Input type="email" {...register("email")} /></F>
+          <F label="E-posta (teklif talepleri bu adrese gelir)">
+            <Input type="email" {...register("email")} />
+          </F>
           <F label="Telefon"><Input {...register("phone")} placeholder="+90 212 000 00 00" /></F>
           <F label="WhatsApp numarası (905...)"><Input {...register("whatsapp")} placeholder="905000000000" /></F>
           <F label="Çalışma saatleri"><Input {...register("workingHours")} /></F>

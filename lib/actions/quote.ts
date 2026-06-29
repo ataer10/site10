@@ -190,17 +190,20 @@ export async function createQuote(
   };
 
   let emailed = false;
-  if (COMPANY_EMAIL) {
+  // Firmaya bildirim → admin panelinde tanımlı firma e-postası (yoksa env fallback)
+  const companyTo = settings.email || COMPANY_EMAIL;
+  if (companyTo) {
     const r = await sendEmail({
-      to: COMPANY_EMAIL,
-      replyTo: data.email,
+      to: companyTo,
+      replyTo: data.email, // firma doğrudan müşteriye yanıtlayabilsin
       ...newQuoteToCompany(emailData, settings),
     });
     emailed = r.sent;
   }
-  // Müşteriye onay
+  // Müşteriye "talebiniz alındı" onayı
   await sendEmail({
     to: data.email,
+    replyTo: companyTo || undefined,
     ...quoteReceivedToCustomer(emailData, settings),
   });
 
