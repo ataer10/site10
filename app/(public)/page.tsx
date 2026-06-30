@@ -6,9 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/site/icon";
 import { CoverImage } from "@/components/site/media";
 import { BrandStrip } from "@/components/site/brand-strip";
+import { FaqSection } from "@/components/site/faq-section";
 import { HeroSlider } from "@/components/site/hero/hero-slider";
 import { QuoteCta } from "@/components/site/quote-cta";
+import { JsonLd } from "@/components/seo/json-ld";
 import { getHeroSlides } from "@/lib/data/hero";
+import { getFaq } from "@/lib/data/faq";
+import { faqJsonLd } from "@/lib/seo/jsonld";
 import { homeCategories, homeFeatures, homeStats } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -27,7 +31,7 @@ const CAT_IMG: Record<string, string> = {
 };
 
 export default async function HomePage() {
-  const heroSlides = await getHeroSlides();
+  const [heroSlides, faq] = await Promise.all([getHeroSlides(), getFaq()]);
   return (
     <>
       {/* ===================== HERO — sinematik vitrin ===================== */}
@@ -181,6 +185,10 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
+
+      {/* ============================== SSS ============================== */}
+      <JsonLd data={faqJsonLd(faq)} />
+      <FaqSection items={faq} />
 
       {/* ============================ CTA BANDI ============================ */}
       <section className="relative overflow-hidden">

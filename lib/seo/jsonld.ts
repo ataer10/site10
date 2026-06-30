@@ -116,6 +116,19 @@ export function productJsonLd(p: ProductLd): Json {
   };
 }
 
+/** FAQPage — anasayfa SSS bölümü (görünür içerikle birebir aynı olmalı). */
+export function faqJsonLd(items: { q: string; a: string }[]): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((it) => ({
+      "@type": "Question",
+      name: it.q,
+      acceptedAnswer: { "@type": "Answer", text: it.a },
+    })),
+  };
+}
+
 /** ItemList — ürün/marka listelerinde (opsiyonel). */
 export function itemListJsonLd(
   items: { name: string; path: string }[],

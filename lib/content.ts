@@ -221,3 +221,39 @@ export const homeFeatures: Feature[] = [
     icon: "Wallet",
   },
 ];
+
+/* ------------------------------ SSS ------------------------------ */
+
+export type FaqItem = { q: string; a: string };
+
+/** Anasayfa SSS — markanın açık fiyat / üyeliksiz teklif modeline dair sorular. */
+export const homeFaq: FaqItem[] = [
+  {
+    q: "Üye olmadan fiyatları görüp teklif alabilir miyim?",
+    a: "Evet. Tüm katalog fiyatları herkese açıktır; üyelik gerekmez. Ürünleri sepete ekleyip üyeliksiz şekilde teklif talebi oluşturabilirsiniz.",
+  },
+  {
+    q: "Teklif nasıl alınır ve ne kadar sürer?",
+    a: "Katalogdan ürünleri sepete ekleyin, “Teklif İste” ile iletişim bilgilerinizi bırakın. İskontolu resmi teklifinizi PDF olarak genellikle 24 saat içinde e-posta ile gönderiyoruz.",
+  },
+  {
+    q: "Fiyatlara KDV dahil mi?",
+    a: "Liste fiyatları KDV hariçtir; her üründe KDV dahil tutar da ayrıca gösterilir. Resmi teklifte tüm vergiler açıkça belirtilir.",
+  },
+  {
+    q: "İskonto, vade veya açık hesap imkânı var mı?",
+    a: "Kurumsal müşterilerimize özel iskonto, vadeli alım ve açık hesap (cari) koşulları sunuyoruz. Geçerli koşullar resmi teklifinizde uygulanır.",
+  },
+  {
+    q: "Ürünler orijinal ve faturalı mı?",
+    a: "Tüm ürünler yalnızca yetkili distribütör kanalından tedarik edilir; faturalı ve üretici garantilidir.",
+  },
+  {
+    q: "Sevkiyat ve teslimat nasıl yapılıyor?",
+    a: "Geniş depo stoğumuz ve anlaşmalı kargo ağımız ile Türkiye geneline hızlı sevkiyat sağlıyoruz.",
+  },
+  {
+    q: "Proje malzeme listesi için destek alabilir miyim?",
+    a: "Evet. Tesisat ve mekanik projeleriniz için teknik ekibimizden malzeme listesi hazırlama ve ürün seçimi desteği alabilirsiniz.",
+  },
+];
