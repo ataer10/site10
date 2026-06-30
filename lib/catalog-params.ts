@@ -10,6 +10,7 @@ export const PARAM = {
   q: "arama",
   sort: "sirala",
   page: "sayfa",
+  view: "gorunum",
 } as const;
 
 export const SORT_OPTIONS = [

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/site/page-header";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/catalog/product-card";
+import { ProductRow } from "@/components/catalog/product-row";
 import { CatalogFilters } from "@/components/catalog/catalog-filters";
 import { CatalogToolbar } from "@/components/catalog/catalog-toolbar";
 import { Pagination } from "@/components/catalog/pagination";
@@ -48,6 +49,7 @@ export default async function UrunlerPage({
 }) {
   const sp = await searchParams;
   const filters = parseProductFilters(sp);
+  const view = sp[PARAM.view] === "izgara" ? "grid" : "list";
 
   const [{ items, total, page, pageCount }, brands, categories] =
     await Promise.all([getProducts(filters), getBrands(), getCategories()]);
@@ -86,6 +88,12 @@ export default async function UrunlerPage({
 
             {items.length === 0 ? (
               <EmptyState />
+            ) : view === "list" ? (
+              <div className="mt-6 divide-y divide-ink-100 border-y border-ink-200">
+                {items.map((p) => (
+                  <ProductRow key={p.slug} product={p} />
+                ))}
+              </div>
             ) : (
               <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((p) => (

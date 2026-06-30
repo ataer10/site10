@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { Search, X, LayoutGrid, List } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   PARAM,
   SORT_OPTIONS,
@@ -18,6 +19,17 @@ export function CatalogToolbar({ total }: { total: number }) {
   const current: SearchParamsRecord = Object.fromEntries(searchParams.entries());
   const sort = searchParams.get(PARAM.sort) ?? "name-asc";
   const initialQ = searchParams.get(PARAM.q) ?? "";
+  // Varsayılan görünüm: liste. Izgara yalnız ?gorunum=izgara ile.
+  const view = searchParams.get(PARAM.view) === "izgara" ? "izgara" : "liste";
+
+  function setView(v: "izgara" | "liste") {
+    router.push(
+      `${pathname}${buildQuery(current, {
+        [PARAM.view]: v === "izgara" ? "izgara" : null,
+      })}`,
+      { scroll: false },
+    );
+  }
 
   const [term, setTerm] = React.useState(initialQ);
   const debounce = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -82,6 +94,43 @@ export function CatalogToolbar({ total }: { total: number }) {
         <span className="font-mono text-xs uppercase tracking-wide text-ink-400">
           {total} ürün
         </span>
+
+        {/* Görünüm: ızgara / liste */}
+        <div
+          className="inline-flex shrink-0 overflow-hidden rounded-sm border border-input"
+          role="group"
+          aria-label="Görünüm"
+        >
+          <button
+            type="button"
+            onClick={() => setView("izgara")}
+            aria-pressed={view === "izgara"}
+            aria-label="Izgara görünüm"
+            className={cn(
+              "grid size-9 place-items-center transition-colors",
+              view === "izgara"
+                ? "bg-ink-900 text-white"
+                : "text-ink-500 hover:bg-ink-50",
+            )}
+          >
+            <LayoutGrid className="size-4" strokeWidth={1.75} />
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("liste")}
+            aria-pressed={view === "liste"}
+            aria-label="Liste görünüm"
+            className={cn(
+              "grid size-9 place-items-center border-l border-input transition-colors",
+              view === "liste"
+                ? "bg-ink-900 text-white"
+                : "text-ink-500 hover:bg-ink-50",
+            )}
+          >
+            <List className="size-4" strokeWidth={1.75} />
+          </button>
+        </div>
+
         <label className="flex items-center gap-2 text-sm">
           <span className="hidden text-ink-500 sm:inline">Sırala</span>
           <select
