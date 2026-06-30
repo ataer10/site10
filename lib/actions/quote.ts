@@ -11,6 +11,7 @@ import {
   type QuoteEmailItem,
 } from "@/lib/email/templates";
 import { getSettings } from "@/lib/data/settings";
+import { getEmailTemplates } from "@/lib/data/email-templates";
 
 type ResolvedItem = {
   productId: string | null;
@@ -175,6 +176,7 @@ export async function createQuote(
     listPrice: it.listPrice,
   }));
   const settings = await getSettings();
+  const templates = await getEmailTemplates();
   const emailData = {
     quoteNumber,
     customerName: data.customerName,
@@ -204,7 +206,7 @@ export async function createQuote(
   await sendEmail({
     to: data.email,
     replyTo: companyTo || undefined,
-    ...quoteReceivedToCustomer(emailData, settings),
+    ...quoteReceivedToCustomer(emailData, settings, templates.quoteReceived),
   });
 
   return { ok: true, quoteNumber, persisted, emailed };

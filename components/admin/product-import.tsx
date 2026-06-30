@@ -1,12 +1,40 @@
 "use client";
 
 import * as React from "react";
-import { Upload, Loader2, CircleCheckBig, TriangleAlert, FileSpreadsheet } from "lucide-react";
+import * as XLSX from "xlsx";
+import {
+  Upload,
+  Loader2,
+  CircleCheckBig,
+  TriangleAlert,
+  FileSpreadsheet,
+  Download,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { importProductsAction } from "@/lib/actions/admin";
 
 type Parsed = { headers: string[]; rows: Record<string, string>[] };
+type RefCategory = { name: string; subs: string[] };
 
+/** Şablon başlıkları (importProducts TR/EN başlıkları tanır). */
+const TEMPLATE_HEADERS = [
+  "ad",
+  "sku",
+  "marka",
+  "kategori",
+  "alt kategori",
+  "fiyat",
+  "birim",
+  "kdv",
+  "açıklama",
+];
+
+const TEMPLATE_EXAMPLES: (string | number)[][] = [
+  ["Küresel Vana DN50", "VN-KV-50", "Grundfos", "Vana & Armatür", "Küresel Vana", 1240, "adet", 20, "PN16 paslanmaz küresel vana"],
+  ["Paslanmaz Dirsek 90° DN42", "FT-PS-90-42", "Viega", "Boru & Fittings", "Dirsek", 86.5, "adet", 20, ""],
+];
+
+/* ----------------------------- CSV ayrıştırma ----------------------------- */
 function parseCsv(text: string): Parsed {
   const norm = text.replace(/\r\n?/g, "\n").trim();
   if (!norm) return { headers: [], rows: [] };
@@ -52,7 +80,38 @@ function parseCsv(text: string): Parsed {
   return { headers, rows };
 }
 
-export function CsvImport({ demo }: { demo: boolean }) {
+/* ---------------------------- Excel ayrıştırma ---------------------------- */
+async function parseXlsx(file: File): Promise<Parsed> {
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: "array" });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  if (!ws) return { headers: [], rows: [] };
+  const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: "" });
+  if (json.length === 0) return { headers: [], rows: [] };
+  const headers = Object.keys(json[0]).map((h) => h.trim().toLowerCase());
+  const rows = json
+    .map((obj) => {
+      const o: Record<string, string> = {};
+      for (const [k, v] of Object.entries(obj)) {
+        o[k.trim().toLowerCase()] = v == null ? "" : String(v).trim();
+      }
+      return o;
+    })
+    .filter((r) => Object.values(r).some((v) => v !== ""));
+  return { headers, rows };
+}
+
+export function ProductImport({
+  demo,
+  brands,
+  categories,
+  onImported,
+}: {
+  demo: boolean;
+  brands: string[];
+  categories: RefCategory[];
+  onImported?: () => void;
+}) {
   const [parsed, setParsed] = React.useState<Parsed | null>(null);
   const [fileName, setFileName] = React.useState<string>("");
   const [pending, startTransition] = React.useTransition();
@@ -60,13 +119,54 @@ export function CsvImport({ demo }: { demo: boolean }) {
     { ok: boolean; inserted: number; errors: string[]; demo?: boolean } | null
   >(null);
 
+  function downloadTemplate() {
+    const wb = XLSX.utils.book_new();
+
+    // 1) Ürünler sayfası (başlık + örnek satırlar)
+    const ws = XLSX.utils.aoa_to_sheet([TEMPLATE_HEADERS, ...TEMPLATE_EXAMPLES]);
+    ws["!cols"] = [
+      { wch: 30 }, { wch: 16 }, { wch: 16 }, { wch: 18 },
+      { wch: 18 }, { wch: 12 }, { wch: 10 }, { wch: 8 }, { wch: 40 },
+    ];
+    XLSX.utils.book_append_sheet(wb, ws, "Ürünler");
+
+    // 2) Referans sayfası (geçerli marka / kategori / alt kategori adları)
+    const allSubs = categories.flatMap((c) => c.subs);
+    const catNames = categories.map((c) => c.name);
+    const maxLen = Math.max(brands.length, catNames.length, allSubs.length, 1);
+    const refRows: string[][] = [["Markalar", "Kategoriler", "Alt kategoriler"]];
+    for (let i = 0; i < maxLen; i++) {
+      refRows.push([brands[i] ?? "", catNames[i] ?? "", allSubs[i] ?? ""]);
+    }
+    const refWs = XLSX.utils.aoa_to_sheet(refRows);
+    refWs["!cols"] = [{ wch: 22 }, { wch: 22 }, { wch: 22 }];
+    XLSX.utils.book_append_sheet(wb, refWs, "Referans");
+
+    const out = XLSX.write(wb, { type: "array", bookType: "xlsx" });
+    const blob = new Blob([out], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "birtek-urun-sablonu.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setResult(null);
     setFileName(file.name);
-    const text = await file.text();
-    setParsed(parseCsv(text));
+    const ext = file.name.toLowerCase().split(".").pop();
+    if (ext === "csv") {
+      const text = await file.text();
+      setParsed(parseCsv(text));
+    } else {
+      setParsed(await parseXlsx(file));
+    }
+    e.target.value = "";
   }
 
   function onImport() {
@@ -75,36 +175,55 @@ export function CsvImport({ demo }: { demo: boolean }) {
     startTransition(async () => {
       const res = await importProductsAction(parsed.rows);
       setResult(res);
+      if (res.ok && !res.demo) onImported?.();
     });
   }
 
   return (
     <div className="space-y-5">
+      {/* 1) Şablon indir */}
+      <div className="rounded-md border border-ink-200 bg-white p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="font-display text-sm font-bold uppercase tracking-wide text-ink-700">
+              1. Excel şablonunu indir
+            </h2>
+            <p className="mt-1 text-sm text-ink-500">
+              Hazır başlıklı şablonu indirip ürünlerinizi doldurun. İkinci sayfada
+              (“Referans”) geçerli marka / kategori / alt kategori adları listelidir.
+            </p>
+          </div>
+          <Button onClick={downloadTemplate} variant="primary" size="sm" className="shrink-0">
+            <Download strokeWidth={1.75} />
+            Şablonu indir (.xlsx)
+          </Button>
+        </div>
+      </div>
+
+      {/* 2) Dosya yükle */}
       <div className="rounded-md border border-ink-200 bg-white p-5">
         <h2 className="font-display text-sm font-bold uppercase tracking-wide text-ink-700">
-          CSV dosyası
+          2. Doldurulmuş dosyayı yükle
         </h2>
         <p className="mt-1 text-sm text-ink-500">
-          Sütunlar (Türkçe/İngilizce başlık): <code className="font-mono text-xs">name/ad</code>,{" "}
-          <code className="font-mono text-xs">sku</code>,{" "}
-          <code className="font-mono text-xs">brand/marka</code>,{" "}
-          <code className="font-mono text-xs">category/kategori</code>,{" "}
-          <code className="font-mono text-xs">subcategory/alt kategori</code>,{" "}
-          <code className="font-mono text-xs">list_price/fiyat</code>,{" "}
-          <code className="font-mono text-xs">unit/birim</code>,{" "}
-          <code className="font-mono text-xs">vat_rate/kdv</code>,{" "}
-          <code className="font-mono text-xs">description/açıklama</code>. Ayraç{" "}
-          <code className="font-mono text-xs">;</code> veya{" "}
-          <code className="font-mono text-xs">,</code> otomatik algılanır.
+          Excel (<code className="font-mono text-xs">.xlsx</code>) veya CSV. Mevcut
+          ürünler <code className="font-mono text-xs">ad</code>’dan üretilen{" "}
+          <code className="font-mono text-xs">slug</code> üzerinden güncellenir
+          (aynı ad → güncelle, yeni ad → ekle).
         </p>
-
         <label className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-sm border border-dashed border-ink-300 bg-ink-50 px-4 py-6 text-sm text-ink-600 hover:bg-ink-100">
           <Upload className="size-4" strokeWidth={1.75} />
-          {fileName || "CSV dosyası seç"}
-          <input type="file" accept=".csv,text/csv" className="hidden" onChange={onFile} />
+          {fileName || "Excel / CSV dosyası seç"}
+          <input
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            className="hidden"
+            onChange={onFile}
+          />
         </label>
       </div>
 
+      {/* Önizleme */}
       {parsed && parsed.rows.length > 0 ? (
         <div className="rounded-md border border-ink-200 bg-white">
           <div className="flex items-center justify-between border-b border-ink-100 px-5 py-3">
@@ -147,6 +266,10 @@ export function CsvImport({ demo }: { demo: boolean }) {
             </p>
           ) : null}
         </div>
+      ) : parsed && parsed.rows.length === 0 ? (
+        <p className="rounded-md border border-ink-200 bg-ink-50 px-4 py-3 text-sm text-ink-600">
+          Dosyada veri satırı bulunamadı. Başlık satırı + en az bir ürün olmalı.
+        </p>
       ) : null}
 
       {result ? (
@@ -173,6 +296,12 @@ export function CsvImport({ demo }: { demo: boolean }) {
             </ul>
           ) : null}
         </div>
+      ) : null}
+
+      {demo ? (
+        <p className="text-xs text-ink-400">
+          Not: Kalıcı kayıt için Supabase service-role anahtarı gereklidir.
+        </p>
       ) : null}
     </div>
   );

@@ -7,6 +7,8 @@ import {
   LayoutDashboard,
   FileText,
   Package,
+  TableProperties,
+  FolderTree,
   Tags,
   Library,
   Settings,
@@ -23,6 +25,8 @@ const nav = [
   { title: "Panel", href: "/admin", icon: LayoutDashboard, exact: true },
   { title: "Teklifler", href: "/admin/teklifler", icon: FileText },
   { title: "Ürünler", href: "/admin/urunler", icon: Package },
+  { title: "Fiyat Listesi", href: "/admin/fiyat-listesi", icon: TableProperties },
+  { title: "Kategoriler", href: "/admin/kategoriler", icon: FolderTree },
   { title: "Markalar", href: "/admin/markalar", icon: Tags },
   { title: "Kataloglar", href: "/admin/kataloglar", icon: Library },
   { title: "Hero / Vitrin", href: "/admin/hero", icon: GalleryHorizontalEnd },
@@ -36,7 +40,7 @@ export function AdminSidebar({ email }: { email: string | null }) {
     exact ? pathname === href : pathname.startsWith(href);
 
   return (
-    <aside className="flex shrink-0 flex-col border-ink-800 bg-ink-900 text-ink-300 lg:h-dvh lg:w-64 lg:border-r">
+    <aside className="flex shrink-0 flex-col border-ink-800 bg-ink-900 text-ink-300 lg:sticky lg:top-0 lg:h-dvh lg:w-64 lg:self-start lg:overflow-y-auto lg:border-r">
       {/* Marka */}
       <div className="flex items-center justify-between border-b border-ink-800 px-5 py-4">
         <Link href="/admin" className="inline-flex items-center gap-2.5">

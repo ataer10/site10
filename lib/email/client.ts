@@ -23,6 +23,28 @@ type Provider =
   | null;
 
 /**
+ * Geçerli bir "from" üretir. `from` zaten e-posta içeriyorsa (@) olduğu gibi
+ * kullanılır; yalnız ad girilmişse kullanıcı e-postasıyla birleştirilir
+ * (ör. "Cagdas İsi" + user → "Cagdas İsi <user@…>").
+ */
+function resolveFrom(from: string | undefined, user: string | undefined): string {
+  const f = (from ?? "").trim();
+  const u = (user ?? "").trim();
+  if (f.includes("@")) return f; // "email" veya "Ad <email>"
+  if (f && u) return `${f} <${u}>`; // sadece ad → ad + kullanıcı e-postası
+  return u || f || "no-reply@localhost";
+}
+
+/**
+ * SMTP şifresini normalize eder. Gmail/Yahoo uygulama şifreleri
+ * "xxxx xxxx xxxx xxxx" biçiminde gösterilir ama SMTP'de boşluksuz kullanılır;
+ * bu sağlayıcılarda şifredeki tüm boşlukları temizleriz.
+ */
+function smtpPass(host: string, pass: string): string {
+  return /gmail|googlemail|yahoo/i.test(host) ? pass.replace(/\s+/g, "") : pass;
+}
+
+/**
  * Gönderim sağlayıcısını çözer — öncelik:
  * 1) Admin panelinde tanımlı SMTP (email_settings)
  * 2) env SMTP (SMTP_HOST…)
@@ -39,9 +61,11 @@ async function resolveProvider(): Promise<Provider> {
         host: db.host,
         port: db.port || 587,
         secure: db.secure,
-        auth: db.user ? { user: db.user, pass: db.pass } : undefined,
+        auth: db.user
+          ? { user: db.user, pass: smtpPass(db.host, db.pass) }
+          : undefined,
       }),
-      from: db.from || db.user || "no-reply@localhost",
+      from: resolveFrom(db.from, db.user),
     };
   }
 
@@ -54,10 +78,13 @@ async function resolveProvider(): Promise<Provider> {
         port: Number(process.env.SMTP_PORT ?? 587),
         secure: process.env.SMTP_SECURE === "true",
         auth: process.env.SMTP_USER
-          ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS ?? "" }
+          ? {
+              user: process.env.SMTP_USER,
+              pass: smtpPass(process.env.SMTP_HOST, process.env.SMTP_PASS ?? ""),
+            }
           : undefined,
       }),
-      from: ENV_FROM || process.env.SMTP_USER || "no-reply@localhost",
+      from: resolveFrom(ENV_FROM, process.env.SMTP_USER),
     };
   }
 

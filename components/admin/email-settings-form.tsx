@@ -93,7 +93,7 @@ export function EmailSettingsForm({
           <ul className="list-disc space-y-0.5 pl-4 text-steel-700">
             <li>
               <strong>Google Workspace / Gmail:</strong> smtp.gmail.com · Port 587
-              · SSL kapalı · uygulama şifresi
+              · SSL kapalı
             </li>
             <li>
               <strong>Office 365:</strong> smtp.office365.com · Port 587 · SSL
@@ -102,6 +102,11 @@ export function EmailSettingsForm({
             <li>
               Port <strong>465</strong> kullanıyorsanız “SSL/TLS”yi işaretleyin;
               <strong> 587</strong> (STARTTLS) için boş bırakın.
+            </li>
+            <li className="font-medium text-danger">
+              Gmail’de normal şifre çalışmaz — “2 Adımlı Doğrulama”yı açıp{" "}
+              <strong>uygulama şifresi</strong> (16 hane) oluşturun ve ŞİFRE’ye onu
+              girin.
             </li>
           </ul>
         </div>

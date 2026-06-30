@@ -38,6 +38,7 @@ import { calcQuote } from "@/lib/quote-calc";
 import { sendEmail, COMPANY_EMAIL } from "@/lib/email/client";
 import { quoteReadyToCustomer } from "@/lib/email/templates";
 import { getSettings } from "@/lib/data/settings";
+import { getEmailTemplates } from "@/lib/data/email-templates";
 import { slugify } from "@/lib/slug";
 
 /* ----------------------------- Teklif ----------------------------- */
@@ -90,6 +91,7 @@ export async function sendQuoteToCustomerAction(
   );
 
   const settings = await getSettings();
+  const templates = await getEmailTemplates();
   const mail = quoteReadyToCustomer(
     {
       quoteNumber: quote.quoteNumber,
@@ -98,6 +100,7 @@ export async function sendQuoteToCustomerAction(
       validUntil: quote.validUntil,
     },
     settings,
+    templates.quoteReady,
   );
   const r = await sendEmail({
     to: quote.email,
@@ -142,9 +145,51 @@ export async function importProductsAction(rows: Record<string, string>[]) {
   const res = await importProducts(rows);
   if (res.ok) {
     revalidatePath("/admin/urunler");
+    revalidatePath("/admin/fiyat-listesi");
     revalidatePath("/urunler");
+    revalidatePath("/fiyat-listesi");
   }
   return res;
+}
+
+/** Fiyat Listesi sayfası — yalnız liste fiyatlarını toplu günceller. */
+export async function updateProductPricesAction(
+  updates: { id: string; listPrice: number }[],
+): Promise<{ ok: boolean; updated: number; demo?: boolean; error?: string }> {
+  const valid = updates.filter(
+    (u) => u.id && Number.isFinite(u.listPrice) && u.listPrice >= 0,
+  );
+  if (valid.length === 0) return { ok: true, updated: 0 };
+
+  if (!isSupabaseAdminConfigured()) {
+    return { ok: true, updated: valid.length, demo: true };
+  }
+
+  const admin = createAdminClient();
+  const results = await Promise.all(
+    valid.map((u) =>
+      admin
+        .from("products")
+        .update({ list_price: u.listPrice })
+        .eq("id", u.id)
+        .then((r) => !r.error),
+    ),
+  );
+  const updated = results.filter(Boolean).length;
+
+  revalidatePath("/admin/fiyat-listesi");
+  revalidatePath("/admin/urunler");
+  revalidatePath("/fiyat-listesi");
+  revalidatePath("/urunler");
+
+  if (updated < valid.length) {
+    return {
+      ok: false,
+      updated,
+      error: `${valid.length - updated} satır güncellenemedi.`,
+    };
+  }
+  return { ok: true, updated };
 }
 
 /* ------------------------------ Markalar ------------------------------ */

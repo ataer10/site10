@@ -5,10 +5,18 @@ import {
   updateEmailSettings,
   type EmailSettingsInput,
 } from "@/lib/data/email-settings";
+import { updateEmailTemplates } from "@/lib/data/email-templates";
+import type { EmailTemplatesConfig } from "@/lib/email/templates";
 import { sendEmail } from "@/lib/email/client";
 
 export async function saveEmailSettingsAction(input: EmailSettingsInput) {
   const res = await updateEmailSettings(input);
+  if (res.ok) revalidatePath("/admin/eposta");
+  return res;
+}
+
+export async function saveEmailTemplatesAction(input: EmailTemplatesConfig) {
+  const res = await updateEmailTemplates(input);
   if (res.ok) revalidatePath("/admin/eposta");
   return res;
 }
